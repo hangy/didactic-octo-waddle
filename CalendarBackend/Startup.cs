@@ -1,10 +1,12 @@
 ﻿namespace CalendarBackend
 {
+    using MediatR;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using MediatR;
+    using NodaTime;
+    using NodaTime.Serialization.JsonNet;
 
     public class Startup
     {
@@ -18,7 +20,19 @@
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc()
+                .AddJsonOptions(options =>
+                {
+                    options.SerializerSettings.ConfigureForNodaTime(DateTimeZoneProviders.Serialization).WithIsoIntervalConverter();
+                });
+            ConfigureMediatR(services);
+        }
+
+        private static void ConfigureMediatR(IServiceCollection services)
+        {
+            services.AddScoped<SingleInstanceFactory>(p => t => p.GetRequiredService(t));
+            services.AddScoped<MultiInstanceFactory>(p => t => p.GetServices(t));
+
             services.AddMediatR();
         }
 
