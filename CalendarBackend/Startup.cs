@@ -1,6 +1,8 @@
 ﻿namespace CalendarBackend
 {
+    using CalendarBackend.Authorization;
     using MediatR;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -25,6 +27,14 @@
                 {
                     options.SerializerSettings.ConfigureForNodaTime(DateTimeZoneProviders.Serialization).WithIsoIntervalConverter();
                 });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("TeamMember", policy => policy.AddRequirements(new TeamMemberRequirement()));
+            });
+
+            services.AddSingleton<IAuthorizationHandler, TeamMemberHandler>();
+
             ConfigureMediatR(services);
         }
 

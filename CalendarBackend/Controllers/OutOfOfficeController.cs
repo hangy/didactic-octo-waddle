@@ -3,13 +3,14 @@
     using CalendarBackend.Application.Commands;
     using CalendarBackend.Application.Queries;
     using MediatR;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
-    [Route("api/[controller]")]
+    [Route("api/[controller]"), Authorize(Policy = "TeamMember")]
     public class OutOfOfficeController : Controller
     {
         public IMediator Mediator { get; }
