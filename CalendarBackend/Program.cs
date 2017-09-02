@@ -2,12 +2,13 @@
 {
     using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
+    using System.Threading.Tasks;
 
     public class Program
     {
-        public static void Main(string[] args)
+        public static Task Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            return BuildWebHost(args).RunAsync();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
