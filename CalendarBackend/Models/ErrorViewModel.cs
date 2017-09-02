@@ -1,5 +1,3 @@
-using System;
-
 namespace CalendarBackend.Models
 {
     public class ErrorViewModel
