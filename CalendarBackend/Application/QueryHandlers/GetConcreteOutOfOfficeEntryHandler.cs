@@ -9,9 +9,9 @@
 
     public class GetConcreteOutOfOfficeEntryHandler : ICancellableAsyncRequestHandler<GetConcreteOutOfOfficeEntry, OutOfOffice>
     {
-        public Task<OutOfOffice> Handle(GetConcreteOutOfOfficeEntry message, CancellationToken cancellationToken)
+        public async Task<OutOfOffice> Handle(GetConcreteOutOfOfficeEntry message, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return new OutOfOffice { UserId = 42 };
         }
     }
 }

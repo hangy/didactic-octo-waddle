@@ -18,9 +18,9 @@
 
         public IConfiguration Configuration { get; }
 
-        public Task<IEnumerable<OutOfOffice>> Handle(GetAllOutOfOfficeEntries message, CancellationToken cancellationToken)
+        public async Task<IEnumerable<OutOfOffice>> Handle(GetAllOutOfOfficeEntries message, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return new OutOfOffice[0];
         }
     }
 }
