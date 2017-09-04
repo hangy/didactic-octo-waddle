@@ -4,7 +4,7 @@
 
     public class UpdateUserCommand : IRequest
     {
-        public UpdateUserCommand(int id, string userName, string displayName, string color, string mailAddress)
+        public UpdateUserCommand(string id, string userName, string displayName, string color, string mailAddress)
         {
             this.Id = id;
             this.UserName = userName;
@@ -13,7 +13,7 @@
             this.MailAddress = mailAddress;
         }
 
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public string UserName { get; set; }
 

@@ -4,11 +4,11 @@
 
     public class DeleteOufOfOfficeEntryCommand : IRequest
     {
-        public DeleteOufOfOfficeEntryCommand(int id)
+        public DeleteOufOfOfficeEntryCommand(string id)
         {
             this.Id = id;
         }
 
-        public int Id { get; }
+        public string Id { get; }
     }
 }

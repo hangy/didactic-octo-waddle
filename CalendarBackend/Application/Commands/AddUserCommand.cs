@@ -2,7 +2,7 @@
 {
     using MediatR;
 
-    public class AddUserCommand : IRequest<int>
+    public class AddUserCommand : IRequest<string>
     {
         public AddUserCommand(string userName, string displayName, string color, string mailAddress)
         {

@@ -6,10 +6,10 @@
     public class OutOfOffice
     {
         [Required, Key]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         [Required]
-        public int UserId { get; set; }
+        public string UserId { get; set; }
 
         [Required]
         public Interval Interval { get; set; }

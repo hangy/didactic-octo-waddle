@@ -29,11 +29,11 @@ namespace CalendarBackend.Domain.SeedWork
     {
 
         int? _requestedHashCode;
-        int _Id;
+        string _Id;
 
         private List<INotification> _domainEvents;
 
-        public virtual int Id
+        public virtual string Id
         {
             get
             {

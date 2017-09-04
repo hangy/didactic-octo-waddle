@@ -29,4 +29,8 @@
     <ProjectReference Include="..\CalendarBackend.Infrastructure\CalendarBackend.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Infrastructure\" />
+  </ItemGroup>
+
 </Project>

@@ -4,18 +4,17 @@
     using NodaTime;
     using System;
 
-    public class AddOutOfOfficeEntryCommand : IRequest<int>
+    public class AddOutOfOfficeEntryCommand : IRequest<string>
     {
-        public AddOutOfOfficeEntryCommand(int userId, Interval interval, string reason)
+        public AddOutOfOfficeEntryCommand(string userId, Interval interval, string reason)
         {
-            this.UserId = userId > 0 ? userId : throw new ArgumentOutOfRangeException(nameof(userId));
+            this.UserId = !string.IsNullOrWhiteSpace(userId) ? userId : throw new ArgumentNullException(nameof(userId));
             this.Interval = interval != default ? interval : throw new ArgumentException($"interval invalid", nameof(interval));
             this.Reason = reason;
         }
 
-        public int UserId { get; }
-
-        
+        public string UserId { get; }
+                
         public Interval Interval { get; }
 
         public string Reason { get; }

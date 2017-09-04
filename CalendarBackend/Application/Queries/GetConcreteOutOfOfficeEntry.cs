@@ -5,11 +5,11 @@
 
     public class GetConcreteOutOfOfficeEntry : IRequest<OutOfOffice>
     {
-        public GetConcreteOutOfOfficeEntry(int id)
+        public GetConcreteOutOfOfficeEntry(string id)
         {
             this.Id = id;
         }
 
-        public int Id { get; }
+        public string Id { get; }
     }
 }

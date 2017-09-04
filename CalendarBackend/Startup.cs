@@ -1,6 +1,7 @@
 ﻿namespace CalendarBackend
 {
     using CalendarBackend.Authorization;
+    using CalendarBackend.Infrastructure;
     using MediatR;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Builder;
@@ -27,6 +28,8 @@
                 {
                     options.SerializerSettings.ConfigureForNodaTime(DateTimeZoneProviders.Serialization).WithIsoIntervalConverter();
                 }).AddControllersAsServices();
+
+            services.RegisterInfrastructure(this.Configuration.GetConnectionString("RavenDB"));
 
             services.AddCors(options =>
             {

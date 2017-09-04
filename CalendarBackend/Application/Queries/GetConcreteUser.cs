@@ -5,11 +5,11 @@
 
     public class GetConcreteUser : IRequest<User>
     {
-        public GetConcreteUser(int id)
+        public GetConcreteUser(string id)
         {
             this.Id = id;
         }
 
-        public int Id { get; }
+        public string Id { get; }
     }
 }

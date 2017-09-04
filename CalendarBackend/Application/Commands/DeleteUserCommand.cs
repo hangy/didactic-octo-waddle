@@ -4,11 +4,11 @@
 
     public class DeleteUserCommand : IRequest
     {
-        public DeleteUserCommand(int id)
+        public DeleteUserCommand(string id)
         {
             this.Id = id;
         }
 
-        public int Id { get; }
+        public string Id { get; }
     }
 }
