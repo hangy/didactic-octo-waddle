@@ -12,4 +12,8 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CalendarBackend.Domain\CalendarBackend.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

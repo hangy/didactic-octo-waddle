@@ -24,4 +24,9 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CalendarBackend.Domain\CalendarBackend.Domain.csproj" />
+    <ProjectReference Include="..\CalendarBackend.Infrastructure\CalendarBackend.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

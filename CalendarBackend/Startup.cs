@@ -26,7 +26,16 @@
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ConfigureForNodaTime(DateTimeZoneProviders.Serialization).WithIsoIntervalConverter();
-                });
+                }).AddControllersAsServices();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
 
             services.AddAuthorization(options =>
             {
