@@ -1,9 +1,6 @@
 ﻿namespace CalendarBackend.Domain.AggregatesModel.OutOfOfficeAggregate
 {
     using CalendarBackend.Domain.SeedWork;
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -11,7 +8,7 @@
     {
         Task<OutOfOffice> AddAsync(OutOfOffice outOfOffice, CancellationToken cancellationToken = default);
 
-        void Update(OutOfOffice outOfOffice);
+        Task UpdateAsync(OutOfOffice outOfOffice, CancellationToken cancellationToken = default);
 
         Task<OutOfOffice> GetAsync(string outOfOfficeId, CancellationToken cancellationToken = default);
     }

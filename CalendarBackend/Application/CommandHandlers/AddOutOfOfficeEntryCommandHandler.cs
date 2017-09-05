@@ -18,7 +18,7 @@
 
         public async Task<string> Handle(AddOutOfOfficeEntryCommand message, CancellationToken cancellationToken)
         {
-            var aggregate = await this.outOfOfficeRepository.AddAsync(new OutOfOffice(), cancellationToken).ConfigureAwait(false);
+            var aggregate = await this.outOfOfficeRepository.AddAsync(new OutOfOffice(null, message.UserId, message.Interval, message.Reason), cancellationToken).ConfigureAwait(false);
             await this.outOfOfficeRepository.UnitOfWork.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             return aggregate.Id;
         }

@@ -3,8 +3,6 @@
     using CalendarBackend.Domain.AggregatesModel.OutOfOfficeAggregate;
     using CalendarBackend.Domain.SeedWork;
     using System;
-    using System.Collections.Generic;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -32,9 +30,10 @@
 
         public Task<OutOfOffice> GetAsync(string outOfOfficeId, CancellationToken cancellationToken = default) => this.Context.Session.LoadAsync<OutOfOffice>(outOfOfficeId, cancellationToken);
 
-        public void Update(OutOfOffice outOfOffice)
+        public Task UpdateAsync(OutOfOffice outOfOffice, CancellationToken cancellationToken = default)
         {
-            // NOOP?
+            // Noop? Should store when savechanges is done
+            return Task.CompletedTask;
         }
     }
 }
