@@ -6,14 +6,13 @@
 
     public class Program
     {
-        public static Task Main(string[] args)
-        {
-            return BuildWebHost(args).RunAsync();
-        }
-
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .Build();
+        public static Task Main(string[] args)
+        {
+            return BuildWebHost(args).RunAsync();
+        }
     }
 }

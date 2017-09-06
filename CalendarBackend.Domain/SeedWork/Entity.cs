@@ -21,46 +21,36 @@ SOFTWARE.
 */
 namespace CalendarBackend.Domain.SeedWork
 {
-    using System;
-    using MediatR;
     using System.Collections.Generic;
+    using CalendarBackend.Domain.Events;
 
     public abstract class Entity
     {
+        private List<IDomainEvent> domainEvents;
 
-        int? _requestedHashCode;
-        string _Id;
+        private int? requestedHashCode;
 
-        private List<INotification> _domainEvents;
+        public List<IDomainEvent> DomainEvents => this.domainEvents;
 
-        public virtual string Id
+        public virtual int Id { get; set; }
+
+        public static bool operator !=(Entity left, Entity right)
         {
-            get
-            {
-                return _Id;
-            }
-            protected set
-            {
-                _Id = value;
-            }
+            return !(left == right);
         }
 
-        public List<INotification> DomainEvents => _domainEvents;
-        public void AddDomainEvent(INotification eventItem)
+        public static bool operator ==(Entity left, Entity right)
         {
-            _domainEvents = _domainEvents ?? new List<INotification>();
-            _domainEvents.Add(eventItem);
+            if (object.Equals(left, null))
+                return (object.Equals(right, null)) ? true : false;
+            else
+                return left.Equals(right);
         }
 
-        public void RemoveDomainEvent(INotification eventItem)
+        public void AddDomainEvent(IDomainEvent eventItem)
         {
-            if (_domainEvents is null) return;
-            _domainEvents.Remove(eventItem);
-        }
-
-        public bool IsTransient()
-        {
-            return this.Id == default;
+            domainEvents = domainEvents ?? new List<IDomainEvent>();
+            domainEvents.Add(eventItem);
         }
 
         public override bool Equals(object obj)
@@ -68,13 +58,13 @@ namespace CalendarBackend.Domain.SeedWork
             if (obj == null || !(obj is Entity))
                 return false;
 
-            if (Object.ReferenceEquals(this, obj))
+            if (object.ReferenceEquals(this, obj))
                 return true;
 
             if (this.GetType() != obj.GetType())
                 return false;
 
-            Entity item = (Entity)obj;
+            var item = (Entity)obj;
 
             if (item.IsTransient() || this.IsTransient())
                 return false;
@@ -86,27 +76,24 @@ namespace CalendarBackend.Domain.SeedWork
         {
             if (!IsTransient())
             {
-                if (!_requestedHashCode.HasValue)
-                    _requestedHashCode = this.Id.GetHashCode() ^ 31; // XOR for random distribution (http://blogs.msdn.com/b/ericlippert/archive/2011/02/28/guidelines-and-rules-for-gethashcode.aspx)
+                if (!requestedHashCode.HasValue)
+                    requestedHashCode = this.Id.GetHashCode() ^ 31; // XOR for random distribution (http://blogs.msdn.com/b/ericlippert/archive/2011/02/28/guidelines-and-rules-for-gethashcode.aspx)
 
-                return _requestedHashCode.Value;
+                return requestedHashCode.Value;
             }
             else
                 return base.GetHashCode();
-
         }
 
-        public static bool operator ==(Entity left, Entity right)
+        public bool IsTransient()
         {
-            if (Object.Equals(left, null))
-                return (Object.Equals(right, null)) ? true : false;
-            else
-                return left.Equals(right);
+            return this.Id == default;
         }
 
-        public static bool operator !=(Entity left, Entity right)
+        public void RemoveDomainEvent(IDomainEvent eventItem)
         {
-            return !(left == right);
+            if (domainEvents is null) return;
+            domainEvents.Remove(eventItem);
         }
     }
 }

@@ -12,7 +12,7 @@
     <ProjectReference Include="..\CalendarBackend.Domain\CalendarBackend.Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="EventStore.ClientAPI.NetCore" Version="4.0.2-rc" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" />
-    <PackageReference Include="RavenDB.Client" Version="4.0.0-beta-40018" />
   </ItemGroup>
 </Project>

@@ -13,14 +13,14 @@
             this.MailAddress = mailAddress;
         }
 
-        public string Id { get; set; }
-
-        public string UserName { get; set; }
+        public string Color { get; set; }
 
         public string DisplayName { get; set; }
 
-        public string Color { get; set; }
+        public string Id { get; set; }
 
         public string MailAddress { get; set; }
+
+        public string UserName { get; set; }
     }
 }

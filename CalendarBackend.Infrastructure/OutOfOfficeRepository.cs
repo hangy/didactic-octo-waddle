@@ -1,21 +1,26 @@
 ﻿namespace CalendarBackend.Infrastructure
 {
     using CalendarBackend.Domain.AggregatesModel.OutOfOfficeAggregate;
-    using CalendarBackend.Domain.SeedWork;
+    using EventStore.ClientAPI;
+    using Newtonsoft.Json;
     using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
     public class OutOfOfficeRepository : IOutOfOfficeRepository
     {
-        public OutOfOfficeRepository(BackendContext context)
+        private readonly Func<Task<IEventStoreConnection>> connectionFactory;
+
+        private readonly JsonSerializer jsonSerializer;
+
+        public OutOfOfficeRepository(Func<Task<IEventStoreConnection>> connectionFactory, JsonSerializer jsonSerializer)
         {
-            this.Context = context ?? throw new ArgumentNullException(nameof(context));
+            this.connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory));
+            this.jsonSerializer = jsonSerializer ?? throw new ArgumentNullException(nameof(jsonSerializer));
         }
-
-        public IUnitOfWork UnitOfWork => this.Context;
-
-        private BackendContext Context { get; }
 
         public async Task<OutOfOffice> AddAsync(OutOfOffice outOfOffice, CancellationToken cancellationToken = default)
         {
@@ -24,16 +29,30 @@
                 throw new ArgumentNullException(nameof(outOfOffice));
             }
 
-            await this.Context.Session.StoreAsync(outOfOffice, cancellationToken).ConfigureAwait(false);
+            var eventData = new List<EventData>();
+            foreach (var @event in outOfOffice.DomainEvents)
+            {
+                using (var stringWriter = new StringWriter())
+                {
+                    this.jsonSerializer.Serialize(stringWriter, @event);
+
+                    eventData.Add(new EventData(
+                             @event.Id,
+                             @event.GetType().Name,
+                             true,
+                             Encoding.UTF8.GetBytes(stringWriter.GetStringBuilder().ToString()),
+                             null));
+                }
+            }
+
+            using (var connection = await this.connectionFactory())
+            {
+                await connection.AppendToStreamAsync(nameof(OutOfOffice), ExpectedVersion.Any, eventData).ConfigureAwait(false);
+            }
+
             return outOfOffice;
         }
 
-        public Task<OutOfOffice> GetAsync(string outOfOfficeId, CancellationToken cancellationToken = default) => this.Context.Session.LoadAsync<OutOfOffice>(outOfOfficeId, cancellationToken);
-
-        public Task UpdateAsync(OutOfOffice outOfOffice, CancellationToken cancellationToken = default)
-        {
-            // Noop? Should store when savechanges is done
-            return Task.CompletedTask;
-        }
+        public Task<OutOfOffice> GetAsync(int outOfOfficeId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
     }
 }

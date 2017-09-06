@@ -13,11 +13,18 @@
     [Route("api/[controller]"), Authorize(Policy = "TeamMember")]
     public class UserController : Controller
     {
-        public IMediator Mediator { get; }
-
         public UserController(IMediator mediator)
         {
             this.Mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+        }
+        public IMediator Mediator { get; }
+
+        // DELETE api/values/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken = default)
+        {
+            await this.Mediator.Send(new DeleteUserCommand(id), cancellationToken);
+            return this.NoContent();
         }
 
         // GET: api/values
@@ -58,14 +65,6 @@
         {
             await this.Mediator.Send(value, cancellationToken);
             return this.RedirectToActionPermanent(nameof(this.Get), new { id = id });
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken = default)
-        {
-            await this.Mediator.Send(new DeleteUserCommand(id), cancellationToken);
-            return this.NoContent();
         }
     }
 }

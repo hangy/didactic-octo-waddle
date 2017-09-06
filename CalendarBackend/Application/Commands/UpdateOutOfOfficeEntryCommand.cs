@@ -16,10 +16,10 @@
 
         public string Id { get; }
 
-        public string UserId { get; }
-
         public Interval Interval { get; }
 
         public string Reason { get; }
+
+        public string UserId { get; }
     }
 }

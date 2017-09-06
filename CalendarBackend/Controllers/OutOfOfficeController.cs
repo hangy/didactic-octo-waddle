@@ -13,11 +13,18 @@
     [Route("api/[controller]"), Authorize(Policy = "TeamMember")]
     public class OutOfOfficeController : Controller
     {
-        public IMediator Mediator { get; }
-
         public OutOfOfficeController(IMediator mediator)
         {
             this.Mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+        }
+        public IMediator Mediator { get; }
+
+        // DELETE api/values/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken = default)
+        {
+            await this.Mediator.Send(new DeleteOufOfOfficeEntryCommand(id), cancellationToken);
+            return this.NoContent();
         }
 
         // GET: api/values
@@ -30,7 +37,7 @@
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -54,18 +61,10 @@
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(string id, [FromBody]UpdateOutOfOfficeEntryCommand value, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Put(int id, [FromBody]UpdateOutOfOfficeEntryCommand value, CancellationToken cancellationToken = default)
         {
             await this.Mediator.Send(value, cancellationToken);
             return this.RedirectToActionPermanent(nameof(this.Get), new { id = id });
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken = default)
-        {
-            await this.Mediator.Send(new DeleteOufOfOfficeEntryCommand(id), cancellationToken);
-            return this.NoContent();
         }
     }
 }

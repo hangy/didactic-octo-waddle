@@ -2,9 +2,11 @@
 {
     using CalendarBackend.Domain.AggregatesModel.OutOfOfficeAggregate;
     using CalendarBackend.Domain.SeedWork;
+    using CalendarBackend.Infrastructure.ReadModel;
+    using EventStore.ClientAPI;
     using Microsoft.Extensions.DependencyInjection;
-    using Raven.Client.Documents;
     using System;
+    using System.Threading.Tasks;
 
     public static class ServiceCollectionExtensions
     {
@@ -15,18 +17,20 @@
                 throw new ArgumentNullException(nameof(services));
             }
 
-            services.AddSingleton(sp =>
+            services.AddSingleton<Func<Task<IEventStoreConnection>>>(async () =>
             {
-                return new DocumentStore
-                {
-                    Urls = new[] { url },
-                    Database = "Calendar"
-                }.Initialize();
+                var store = EventStoreConnection.Create(url);
+                store.AuthenticationFailed += (s, e) => Console.WriteLine(e);
+                store.Closed += (s, e) => Console.WriteLine(e);
+                store.Connected += (s, e) => Console.WriteLine(e);
+                store.Disconnected += (s, e) => Console.WriteLine(e);
+                store.ErrorOccurred += (s, e) => Console.WriteLine(e);
+                store.Reconnecting += (s, e) => Console.WriteLine(e);
+                await store.ConnectAsync();
+                return store;
             });
 
-            services.AddScoped(sp => sp.GetRequiredService<IDocumentStore>().OpenAsyncSession());
-            services.AddScoped<BackendContext>();
-            services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<BackendContext>());
+            services.AddSingleton<OutOfOfficeReadModel>();
 
             services.AddScoped<IOutOfOfficeRepository, OutOfOfficeRepository>();
         }

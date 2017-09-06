@@ -7,7 +7,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class AddOutOfOfficeEntryCommandHandler : ICancellableAsyncRequestHandler<AddOutOfOfficeEntryCommand, string>
+    public class AddOutOfOfficeEntryCommandHandler : ICancellableAsyncRequestHandler<AddOutOfOfficeEntryCommand, int>
     {
         private readonly IOutOfOfficeRepository outOfOfficeRepository;
 
@@ -16,10 +16,10 @@
             this.outOfOfficeRepository = outOfOfficeRepository ?? throw new ArgumentNullException(nameof(outOfOfficeRepository));
         }
 
-        public async Task<string> Handle(AddOutOfOfficeEntryCommand message, CancellationToken cancellationToken)
+        public async Task<int> Handle(AddOutOfOfficeEntryCommand message, CancellationToken cancellationToken)
         {
-            var aggregate = await this.outOfOfficeRepository.AddAsync(new OutOfOffice(null, message.UserId, message.Interval, message.Reason), cancellationToken).ConfigureAwait(false);
-            await this.outOfOfficeRepository.UnitOfWork.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            var aggregate = await this.outOfOfficeRepository.AddAsync(new OutOfOffice(default, message.UserId, message.Interval, message.Reason), cancellationToken).ConfigureAwait(false);
+            
             return aggregate.Id;
         }
     }

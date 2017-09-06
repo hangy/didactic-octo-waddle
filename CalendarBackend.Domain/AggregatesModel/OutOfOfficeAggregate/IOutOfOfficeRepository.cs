@@ -8,8 +8,6 @@
     {
         Task<OutOfOffice> AddAsync(OutOfOffice outOfOffice, CancellationToken cancellationToken = default);
 
-        Task UpdateAsync(OutOfOffice outOfOffice, CancellationToken cancellationToken = default);
-
-        Task<OutOfOffice> GetAsync(string outOfOfficeId, CancellationToken cancellationToken = default);
+        Task<OutOfOffice> GetAsync(int outOfOfficeId, CancellationToken cancellationToken = default);
     }
 }
