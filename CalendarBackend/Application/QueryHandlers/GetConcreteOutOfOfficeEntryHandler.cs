@@ -1,11 +1,9 @@
 ﻿namespace CalendarBackend.Application.QueryHandlers
 {
     using CalendarBackend.Application.Queries;
-    using CalendarBackend.Domain.AggregatesModel.OutOfOfficeAggregate;
     using CalendarBackend.Infrastructure.ReadModel;
     using MediatR;
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;

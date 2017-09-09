@@ -1,8 +1,6 @@
 ﻿namespace CalendarBackend.Infrastructure
 {
     using CalendarBackend.Domain.AggregatesModel.OutOfOfficeAggregate;
-    using EventStore.ClientAPI;
-    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.IO;
