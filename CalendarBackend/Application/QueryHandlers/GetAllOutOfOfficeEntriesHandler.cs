@@ -19,13 +19,11 @@
 
         public OutOfOfficeReadModel Model { get; }
 
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 #pragma warning disable CC0061 // Asynchronous method can be terminated with the 'Async' keyword.
         public async Task<IEnumerable<OutOfOffice>> Handle(GetAllOutOfOfficeEntries message, CancellationToken cancellationToken = default)
 #pragma warning restore CC0061 // Asynchronous method can be terminated with the 'Async' keyword.
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
-            return this.Model.Entries.OfType<OutOfOffice>();
+            return await this.Model.GetEntriesAsync(cancellationToken);
         }
     }
 }

@@ -3,6 +3,7 @@
     using CalendarBackend.Domain.Events;
     using CalendarBackend.Domain.SeedWork;
     using NodaTime;
+    using System;
 
     public class OutOfOffice : Entity, IAggregateRoot
     {
@@ -12,7 +13,7 @@
 
         private string userId;
 
-        public OutOfOffice(int id, string userId, Interval interval, string reason)
+        public OutOfOffice(Guid id, string userId, Interval interval, string reason)
         {
             this.Id = id;
             this.userId = userId;

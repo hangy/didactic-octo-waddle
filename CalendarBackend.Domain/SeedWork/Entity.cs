@@ -23,6 +23,7 @@ namespace CalendarBackend.Domain.SeedWork
 {
     using System.Collections.Generic;
     using CalendarBackend.Domain.Events;
+    using System;
 
     public abstract class Entity
     {
@@ -32,7 +33,7 @@ namespace CalendarBackend.Domain.SeedWork
 
         public List<IDomainEvent> DomainEvents => this.domainEvents;
 
-        public virtual int Id { get; set; }
+        public virtual Guid Id { get; set; }
 
         public static bool operator !=(Entity left, Entity right)
         {

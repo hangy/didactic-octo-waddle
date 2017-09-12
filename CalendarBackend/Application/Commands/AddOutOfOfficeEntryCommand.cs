@@ -4,7 +4,7 @@
     using NodaTime;
     using System;
 
-    public class AddOutOfOfficeEntryCommand : IRequest<int>
+    public class AddOutOfOfficeEntryCommand : IRequest<Guid>
     {
         public AddOutOfOfficeEntryCommand(string userId, Interval interval, string reason)
         {
