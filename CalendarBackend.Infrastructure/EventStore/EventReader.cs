@@ -1,25 +1,21 @@
 ﻿namespace CalendarBackend.Infrastructure.EventStore
 {
+    using CalendarBackend.Domain.Events;
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
-    using CalendarBackend.Domain.Events;
-    using Newtonsoft.Json;
 
     public class EventReader : IEventReader
     {
-        private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1);
+        private readonly IReadOnlyList<IDomainEvent> list;
 
-        private readonly JsonSerializer jsonSerializer;
+        private readonly SemaphoreSlim readWriteSemaphore;
 
-        private readonly JsonReader jsonReader;
-
-        public EventReader(JsonSerializer jsonSerializer, string path)
+        public EventReader(IReadOnlyList<IDomainEvent> list, SemaphoreSlim readWriteSemaphore)
         {
-            this.jsonSerializer = jsonSerializer ?? throw new ArgumentNullException(nameof(jsonSerializer));
-            this.jsonReader = new JsonTextReader(new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, true)));
+            this.list = list ?? throw new ArgumentNullException(nameof(list));
+            this.readWriteSemaphore = readWriteSemaphore ?? throw new ArgumentNullException(nameof(readWriteSemaphore));
         }
 
         public void Dispose()
@@ -29,14 +25,14 @@
 
         public async Task<IReadOnlyList<IDomainEvent>> ReadAllAsync(CancellationToken cancellationToken = default)
         {
-            await this.semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+            await this.readWriteSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
             try
             {
-                this.jsonSerializer.Deserialize(this.jsonReader);
+                return this.list;
             }
             finally
             {
-                this.semaphore.Release();
+                this.readWriteSemaphore.Release();
             }
         }
 
@@ -44,8 +40,7 @@
         {
             if (disposing)
             {
-                this.semaphore?.Dispose();
-                (this.jsonReader as IDisposable)?.Dispose();
+
             }
         }
     }

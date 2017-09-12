@@ -1,22 +1,24 @@
 ﻿namespace CalendarBackend.Infrastructure.EventStore
 {
+    using CalendarBackend.Domain.Events;
     using System;
     using System.Collections.Generic;
-    using System.IO;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
     public class EventStore : IEventStore, IDisposable
     {
+        private readonly SemaphoreSlim readWriteSemaphore = new SemaphoreSlim(1);
 
-        private readonly EventReader reader;
-        private readonly EventWriter writer;
+        private readonly IEventReader reader;
 
-        public EventStore(string path)
+        private readonly IEventWriter writer;
+
+        public EventStore()
         {
-            this.writer = new EventWriter(path);
-            this.reader = new EventReader(path);
+            var sharedList = new List<IDomainEvent>();
+            this.writer = new EventWriter(sharedList, readWriteSemaphore);
+            this.reader = new EventReader(sharedList, readWriteSemaphore);
         }
 
         public void Dispose()
@@ -32,13 +34,14 @@
 
         public Task<IEventWriter> GetWriterAsync(CancellationToken cancellationToken = default)
         {
-            return this.writer;
+            return Task.FromResult(this.writer);
         }
 
         private void Dispose(bool disposing)
         {
             if (disposing)
             {
+                this.readWriteSemaphore?.Dispose();
                 this.writer?.Dispose();
                 this.reader?.Dispose();
             }

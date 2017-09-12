@@ -1,6 +1,7 @@
 ﻿namespace CalendarBackend.Infrastructure
 {
     using CalendarBackend.Domain.AggregatesModel.OutOfOfficeAggregate;
+    using CalendarBackend.Infrastructure.EventStore;
     using CalendarBackend.Infrastructure.ReadModel;
     using Microsoft.Extensions.DependencyInjection;
     using System;
@@ -14,9 +15,10 @@
                 throw new ArgumentNullException(nameof(services));
             }
 
-            services.AddSingleton(typeof(IEventStream<>), typeof(EventStream<>));
+            services.AddSingleton<IEventStore, EventStore.EventStore>();
+            services.AddScoped<IEventStream, EventStream>();
 
-            services.AddSingleton<OutOfOfficeReadModel>();
+            services.AddScoped<OutOfOfficeReadModel>();
 
             services.AddScoped<IOutOfOfficeRepository, OutOfOfficeRepository>();
         }

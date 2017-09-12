@@ -1,25 +1,21 @@
 ﻿namespace CalendarBackend.Infrastructure.EventStore
 {
+    using CalendarBackend.Domain.Events;
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
-    using CalendarBackend.Domain.Events;
-    using Newtonsoft.Json;
 
     public class EventWriter : IEventWriter
     {
-        private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1);
+        private readonly IList<IDomainEvent> list;
 
-        private readonly JsonSerializer jsonSerializer;
+        private readonly SemaphoreSlim readWriteSemaphore;
 
-        private readonly JsonWriter jsonWriter;
-
-        public EventWriter(JsonSerializer jsonSerializer, string path)
+        public EventWriter(IList<IDomainEvent> list, SemaphoreSlim readWriteSemaphore)
         {
-            this.jsonSerializer = jsonSerializer ?? throw new ArgumentNullException(nameof(jsonSerializer));
-            this.jsonWriter = new JsonTextWriter(new StreamWriter(new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.Read, 4096, true)));
+            this.list = list ?? throw new ArgumentNullException(nameof(list));
+            this.readWriteSemaphore = readWriteSemaphore ?? throw new ArgumentNullException(nameof(readWriteSemaphore));
         }
 
         public async Task<IReadOnlyList<IDomainEvent>> AppendAllAsync(IEnumerable<IDomainEvent> events, CancellationToken cancellationToken = default)
@@ -29,15 +25,21 @@
                 throw new ArgumentNullException(nameof(events));
             }
 
-            await this.semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+            await this.readWriteSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
             try
             {
-                // this.jsonSerializer.Serialize()
-                throw new NotImplementedException();
+                var result = new List<IDomainEvent>();
+                foreach (var @event in events)
+                {
+                    this.list.Add(@event);
+                    result.Add(@event);
+                }
+
+                return result;
             }
             finally
             {
-                this.semaphore.Release();
+                this.readWriteSemaphore.Release();
             }
         }
 
@@ -50,8 +52,6 @@
         {
             if (disposing)
             {
-                this.semaphore?.Dispose();
-                (this.jsonWriter as IDisposable)?.Dispose();
             }
         }
     }
