@@ -1,6 +1,6 @@
 ﻿namespace CalendarBackend.Application.Queries
 {
-    using CalendarBackend.Application.Models;
+    using CalendarBackend.Infrastructure.ReadModel;
     using MediatR;
     using System.Collections.Generic;
 

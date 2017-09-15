@@ -1,5 +1,6 @@
-﻿namespace CalendarBackend.Application.Models
+﻿namespace CalendarBackend.Infrastructure.ReadModel
 {
+    using System;
     using System.ComponentModel.DataAnnotations;
 
     public class User
@@ -9,8 +10,9 @@
 
         [Required, StringLength(20)]
         public string DisplayName { get; set; }
+
         [Required, Key]
-        public string Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required, EmailAddress]
         public string MailAddress { get; set; }

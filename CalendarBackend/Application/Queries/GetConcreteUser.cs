@@ -1,15 +1,16 @@
 ﻿namespace CalendarBackend.Application.Queries
 {
-    using CalendarBackend.Application.Models;
+    using CalendarBackend.Infrastructure.ReadModel;
     using MediatR;
+    using System;
 
     public class GetConcreteUser : IRequest<User>
     {
-        public GetConcreteUser(string id)
+        public GetConcreteUser(Guid id)
         {
             this.Id = id;
         }
 
-        public string Id { get; }
+        public Guid Id { get; }
     }
 }

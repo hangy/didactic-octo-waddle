@@ -37,7 +37,7 @@
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken = default)
         {
             try
             {

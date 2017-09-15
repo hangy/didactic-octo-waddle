@@ -5,21 +5,20 @@
     using MediatR;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class GetAllOutOfOfficeEntriesHandler : ICancellableAsyncRequestHandler<GetAllOutOfOfficeEntries, IEnumerable<OutOfOffice>>
+    public class GetAllUsersHandler : ICancellableAsyncRequestHandler<GetAllUsers, IEnumerable<User>>
     {
-        public GetAllOutOfOfficeEntriesHandler(OutOfOfficeReadModel model)
+        public GetAllUsersHandler(UserReadModel model)
         {
             this.Model = model ?? throw new ArgumentNullException(nameof(model));
         }
 
-        public OutOfOfficeReadModel Model { get; }
+        public UserReadModel Model { get; }
 
 #pragma warning disable CC0061 // Asynchronous method can be terminated with the 'Async' keyword.
-        public async Task<IEnumerable<OutOfOffice>> Handle(GetAllOutOfOfficeEntries message, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<User>> Handle(GetAllUsers message, CancellationToken cancellationToken = default)
 #pragma warning restore CC0061 // Asynchronous method can be terminated with the 'Async' keyword.
         {
             return await this.Model.GetEntriesAsync(cancellationToken);

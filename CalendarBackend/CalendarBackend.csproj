@@ -30,7 +30,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Application\Models\" />
     <Folder Include="Infrastructure\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Application\QueryHandlers\GetConcreteUserHandler.cs" />
   </ItemGroup>
 
 </Project>

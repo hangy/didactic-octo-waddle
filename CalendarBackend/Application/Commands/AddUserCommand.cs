@@ -1,8 +1,9 @@
 ﻿namespace CalendarBackend.Application.Commands
 {
     using MediatR;
+    using System;
 
-    public class AddUserCommand : IRequest<string>
+    public class AddUserCommand : IRequest<Guid>
     {
         public AddUserCommand(string userName, string displayName, string color, string mailAddress)
         {
