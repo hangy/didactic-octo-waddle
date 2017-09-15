@@ -8,9 +8,9 @@
 
     public class EventStore : IEventStore, IDisposable
     {
-        private readonly SemaphoreSlim readWriteSemaphore = new SemaphoreSlim(1);
 
         private readonly IEventReader reader;
+        private readonly SemaphoreSlim readWriteSemaphore = new SemaphoreSlim(1);
 
         private readonly IEventWriter writer;
 

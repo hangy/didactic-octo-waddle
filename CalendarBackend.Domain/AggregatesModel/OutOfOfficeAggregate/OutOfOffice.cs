@@ -20,7 +20,7 @@
             this.interval = interval;
             this.reason = reason;
 
-            this.AddDomainEvent(new OutOfOfficeEntryCreatedEvent(this.userId, this.interval, this.reason));
+            this.AddDomainEvent(new OutOfOfficeEntryCreatedEvent(this.Id, this.userId, this.interval, this.reason));
         }
 
         protected OutOfOffice()

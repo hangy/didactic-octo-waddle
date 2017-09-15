@@ -37,13 +37,13 @@
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken = default)
         {
             try
             {
-                var entries = await this.Mediator.Send(new GetConcreteOutOfOfficeEntry(id), cancellationToken);
+                var entry = await this.Mediator.Send(new GetConcreteOutOfOfficeEntry(id), cancellationToken);
 
-                return Ok(entries);
+                return Ok(entry);
             }
             catch (KeyNotFoundException)
             {

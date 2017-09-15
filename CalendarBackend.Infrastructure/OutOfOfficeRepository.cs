@@ -3,6 +3,7 @@
     using CalendarBackend.Domain.AggregatesModel.OutOfOfficeAggregate;
     using CalendarBackend.Infrastructure.EventStore;
     using System;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -10,9 +11,12 @@
     {
         private readonly IEventStream eventStream;
 
-        public OutOfOfficeRepository(IEventStream eventStream)
+        private readonly ReadModel.OutOfOfficeReadModel readModel;
+
+        public OutOfOfficeRepository(IEventStream eventStream, ReadModel.OutOfOfficeReadModel readModel)
         {
             this.eventStream = eventStream ?? throw new ArgumentNullException(nameof(eventStream));
+            this.readModel = readModel ?? throw new ArgumentNullException(nameof(readModel));
         }
 
         public async Task<OutOfOffice> AddAsync(OutOfOffice outOfOffice, CancellationToken cancellationToken = default)
@@ -26,6 +30,12 @@
             return outOfOffice;
         }
 
-        public Task<OutOfOffice> GetAsync(int outOfOfficeId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        public async Task<OutOfOffice> GetAsync(Guid outOfOfficeId, CancellationToken cancellationToken = default)
+        {
+            var entries = await this.readModel.GetEntriesAsync(cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+            var entry = entries.SingleOrDefault(e => e.Id == outOfOfficeId);
+            return entry == null ? null : new OutOfOffice(entry.Id, entry.UserId, entry.Interval, entry.Reason);
+        }
     }
 }

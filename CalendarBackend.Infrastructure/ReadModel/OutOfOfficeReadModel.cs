@@ -1,6 +1,5 @@
 ﻿namespace CalendarBackend.Infrastructure.ReadModel
 {
-    using CalendarBackend.Domain.AggregatesModel.OutOfOfficeAggregate;
     using CalendarBackend.Domain.Events;
     using CalendarBackend.Infrastructure.EventStore;
     using MediatR;
@@ -47,7 +46,7 @@
             switch (@event)
             {
                 case OutOfOfficeEntryCreatedEvent e:
-                    this.entries.Add(new OutOfOffice(e.Id, e.UserId, e.Interval, e.Reason));
+                    this.entries.Add(new OutOfOffice { Id = e.OutOfOfficeId, UserId = e.UserId, Interval = e.Interval, Reason = e.Reason });
                     break;
             }
         }

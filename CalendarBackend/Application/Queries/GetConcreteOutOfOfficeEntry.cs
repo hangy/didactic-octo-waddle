@@ -1,15 +1,16 @@
 ﻿namespace CalendarBackend.Application.Queries
 {
-    using CalendarBackend.Application.Models;
+    using CalendarBackend.Infrastructure.ReadModel;
     using MediatR;
+    using System;
 
     public class GetConcreteOutOfOfficeEntry : IRequest<OutOfOffice>
     {
-        public GetConcreteOutOfOfficeEntry(int id)
+        public GetConcreteOutOfOfficeEntry(Guid id)
         {
             this.Id = id;
         }
 
-        public int Id { get; }
+        public Guid Id { get; }
     }
 }
