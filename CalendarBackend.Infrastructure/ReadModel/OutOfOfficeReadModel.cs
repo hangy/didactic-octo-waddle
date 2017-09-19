@@ -42,19 +42,41 @@
             await this.HandleAsync(notification);
         }
 
+        private void Handle(OutOfOfficeEntryCreatedEvent e)
+        {
+            this.entries.Add(new OutOfOffice { Id = e.OutOfOfficeId, UserId = e.UserId, Interval = e.Interval, Reason = e.Reason, DomainEvents = new List<IDomainEvent> { e } });
+        }
+
+        private void Handle(OutOfOfficeEntryCancelledEvent e)
+        {
+            var entry = this.entries.SingleOrDefault(ent => ent.Id == e.OutOfOfficeId);
+            if (entry != null)
+            {
+                this.entries.Remove(entry);
+            }
+        }
+
+        private void Handle(OutOfOfficeEntryRescheduledEvent e)
+        {
+            var entry = this.entries.SingleOrDefault(ent => ent.Id == e.OutOfOfficeId);
+            if (entry != null)
+            {
+                entry.Interval = e.Interval;
+            }
+        }
+
         private async Task HandleAsync(IDomainEvent @event, CancellationToken cancellationToken = default)
         {
             switch (@event)
             {
                 case OutOfOfficeEntryCreatedEvent e:
-                    this.entries.Add(new OutOfOffice { Id = e.OutOfOfficeId, UserId = e.UserId, Interval = e.Interval, Reason = e.Reason, DomainEvents = new List<IDomainEvent> { e } });
+                    this.Handle(e);
                     break;
                 case OutOfOfficeEntryCancelledEvent e:
-                    var entry = this.entries.SingleOrDefault(ent => ent.Id == e.OutOfOfficeId);
-                    if (entry != null)
-                    {
-                        this.entries.Remove(entry);
-                    }
+                    this.Handle(e);
+                    break;
+                case OutOfOfficeEntryRescheduledEvent e:
+                    this.Handle(e);
                     break;
             }
         }

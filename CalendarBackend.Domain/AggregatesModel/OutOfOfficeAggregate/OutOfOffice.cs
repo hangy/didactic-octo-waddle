@@ -42,6 +42,12 @@
             }
         }
 
+        public void RescheduleTo(Interval interval)
+        {
+            this.interval = interval;
+            this.AddDomainEvent(new OutOfOfficeEntryRescheduledEvent(this.Id, interval));
+        }
+
         protected OutOfOffice()
         {
         }

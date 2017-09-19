@@ -59,12 +59,12 @@
             return this.CreatedAtAction(nameof(this.Get), new { id = id }, id);
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody]UpdateOutOfOfficeEntryCommand value, CancellationToken cancellationToken = default)
+        [Route("reschedule")]
+        [HttpPut]
+        public async Task<IActionResult> Reschedule([FromBody]RescheduleOutOfOfficeEntryCommand value, CancellationToken cancellationToken = default)
         {
             await this.Mediator.Send(value, cancellationToken);
-            return this.RedirectToActionPermanent(nameof(this.Get), new { id = id });
+            return this.RedirectToActionPermanent(nameof(this.Get), new { id = value.Id });
         }
     }
 }
