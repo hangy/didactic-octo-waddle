@@ -1,6 +1,7 @@
 ﻿namespace CalendarBackend.Infrastructure
 {
     using CalendarBackend.Domain.AggregatesModel.OutOfOfficeAggregate;
+    using CalendarBackend.Domain.SeedWork;
     using CalendarBackend.Infrastructure.EventStore;
     using CalendarBackend.Infrastructure.ReadModel;
     using Microsoft.Extensions.DependencyInjection;

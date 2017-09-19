@@ -5,6 +5,7 @@
     using MediatR;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -46,7 +47,14 @@
             switch (@event)
             {
                 case OutOfOfficeEntryCreatedEvent e:
-                    this.entries.Add(new OutOfOffice { Id = e.OutOfOfficeId, UserId = e.UserId, Interval = e.Interval, Reason = e.Reason });
+                    this.entries.Add(new OutOfOffice { Id = e.OutOfOfficeId, UserId = e.UserId, Interval = e.Interval, Reason = e.Reason, DomainEvents = new List<IDomainEvent> { e } });
+                    break;
+                case OutOfOfficeEntryCancelledEvent e:
+                    var entry = this.entries.SingleOrDefault(ent => ent.Id == e.OutOfOfficeId);
+                    if (entry != null)
+                    {
+                        this.entries.Remove(entry);
+                    }
                     break;
             }
         }

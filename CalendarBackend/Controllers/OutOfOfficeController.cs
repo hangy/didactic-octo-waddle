@@ -21,9 +21,9 @@
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken = default)
         {
-            await this.Mediator.Send(new DeleteOufOfOfficeEntryCommand(id), cancellationToken);
+            await this.Mediator.Send(new DeleteOufOfOfficeEntryCommand(id), cancellationToken).ConfigureAwait(false);
             return this.NoContent();
         }
 

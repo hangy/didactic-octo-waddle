@@ -1,14 +1,15 @@
 ﻿namespace CalendarBackend.Application.Commands
 {
     using MediatR;
+    using System;
 
     public class DeleteOufOfOfficeEntryCommand : IRequest
     {
-        public DeleteOufOfOfficeEntryCommand(string id)
+        public DeleteOufOfOfficeEntryCommand(Guid id)
         {
             this.Id = id;
         }
 
-        public string Id { get; }
+        public Guid Id { get; }
     }
 }
