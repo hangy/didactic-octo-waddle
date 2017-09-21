@@ -25,7 +25,7 @@
                 throw new ArgumentNullException(nameof(path));
             }
 
-            this.zipArchive = new ZipArchive(new FileStream(path, FileMode.OpenOrCreate), ZipArchiveMode.Update);
+            this.zipArchive = ZipFile.Open(path, ZipArchiveMode.Update);
 
             this.writer = new EventWriter(this.zipArchive, readWriteSemaphore);
             this.reader = new EventReader(this.zipArchive, readWriteSemaphore);
