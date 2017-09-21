@@ -36,7 +36,7 @@
 
                 foreach (var @event in events)
                 {
-                    var entry = this.zipArchive.CreateEntry($"{++count:10}.json", CompressionLevel.Optimal);
+                    var entry = this.zipArchive.CreateEntry($"{++count:D10}.json", CompressionLevel.Optimal);
                     WriteEntry(@event, entry);
                     result.Add(@event);
                 }
