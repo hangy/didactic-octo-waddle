@@ -66,5 +66,13 @@
             await this.Mediator.Send(value, cancellationToken);
             return this.RedirectToActionPermanent(nameof(this.Get), new { id = value.Id });
         }
+        
+        [Route("rereason")]
+        [HttpPut]
+        public async Task<IActionResult> Rereason([FromBody]RereasonOutOfOfficeEntryCommand value, CancellationToken cancellationToken = default)
+        {
+            await this.Mediator.Send(value, cancellationToken);
+            return this.RedirectToActionPermanent(nameof(this.Get), new { id = value.Id });
+        }
     }
 }

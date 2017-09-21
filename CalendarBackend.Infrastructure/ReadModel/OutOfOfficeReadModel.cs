@@ -65,6 +65,15 @@
             }
         }
 
+        private void Handle(OutOfOfficeEntryRereasonedEvent e)
+        {
+            var entry = this.entries.SingleOrDefault(ent => ent.Id == e.OutOfOfficeId);
+            if (entry != null)
+            {
+                entry.Reason = e.Reason;
+            }
+        }
+
         private async Task HandleAsync(IDomainEvent @event, CancellationToken cancellationToken = default)
         {
             switch (@event)
@@ -76,6 +85,9 @@
                     this.Handle(e);
                     break;
                 case OutOfOfficeEntryRescheduledEvent e:
+                    this.Handle(e);
+                    break;
+                case OutOfOfficeEntryRereasonedEvent e:
                     this.Handle(e);
                     break;
             }

@@ -42,6 +42,12 @@
             }
         }
 
+        public void ChangeReason(string reason)
+        {
+            this.reason = reason;
+            this.AddDomainEvent(new OutOfOfficeEntryRereasonedEvent(this.Id, reason));
+        }
+
         public void RescheduleTo(Interval interval)
         {
             this.interval = interval;
