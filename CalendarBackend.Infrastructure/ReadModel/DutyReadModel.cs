@@ -81,7 +81,7 @@
 
         private void Handle(DutyCreatedEvent e)
         {
-            this.entries.Add(new Duty { Id = e.DutyId, Name = e.Name, Interval = e.Interval, Assignments = new List<AssignedOnDuty>() });
+            this.entries.Add(new Duty { Id = e.DutyId, Name = e.Name, Interval = e.Interval, Assignments = new List<AssignedOnDuty>(), DomainEvents = new List<IDomainEvent> { e } });
         }
 
         private void Handle(OnDutySubstitutedDefinedEvent e)
