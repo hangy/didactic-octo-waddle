@@ -57,7 +57,7 @@
             services.AddMvc()
                 .AddJsonOptions(options =>
                 {
-                    options.SerializerSettings.ConfigureForNodaTime(DateTimeZoneProviders.Serialization).WithIsoIntervalConverter();
+                    options.SerializerSettings.ConfigureForNodaTime(DateTimeZoneProviders.Serialization).WithIsoIntervalConverter().WithIsoDateIntervalConverter();
                 }).AddControllersAsServices();
 
             services.RegisterInfrastructure(this.Configuration.GetConnectionString("EventStore"));
