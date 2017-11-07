@@ -2,16 +2,19 @@
 {
     using NodaTime;
     using System.ComponentModel.DataAnnotations;
+    using System.Runtime.Serialization;
 
+    [DataContract]
     public class AssignedOnDuty
     {
 
-        [Required]
+        [Required, DataMember]
         public DateInterval Interval { get; set; }
 
-        [Required]
+        [Required, DataMember]
         public string UserId { get; set; }
 
+        [DataMember]
         public bool Substitution { get; set; }
     }
 }
