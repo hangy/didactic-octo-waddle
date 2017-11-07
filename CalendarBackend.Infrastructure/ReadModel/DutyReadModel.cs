@@ -70,7 +70,6 @@
 
                 entry.Assignments.Add(new AssignedOnDuty
                 {
-                    Duty = entry,
                     UserId = userId,
                     Interval = new DateInterval(nextIntervalStart, end)
                 });
@@ -105,7 +104,7 @@
             {
                 // Remove everything beginning from the start date except if a another user had substituted for this period
                 entry.Assignments.RemoveAll(a => a.Interval.Start >= e.Start && (!a.Substitution && e.UserId != a.UserId));
-                AssignEmptyTimeRange(entry, new AssignedOnDuty { Duty = entry, UserId = e.UserId, Interval = new DateInterval(e.Start, e.Start) });
+                AssignEmptyTimeRange(entry, new AssignedOnDuty { UserId = e.UserId, Interval = new DateInterval(e.Start, e.Start) });
             }
         }
 

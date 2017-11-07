@@ -5,8 +5,6 @@
 
     public class AssignedOnDuty
     {
-        [Required]
-        public Duty Duty { get; set; }
 
         [Required]
         public DateInterval Interval { get; set; }
