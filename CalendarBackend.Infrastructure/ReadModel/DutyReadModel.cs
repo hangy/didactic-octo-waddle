@@ -43,9 +43,10 @@
             await this.HandleAsync(notification);
         }
 
-        private static void AssignEmptyTimeRange(Duty entry)
+        private static void AssignEmptyTimeRange(Duty entry, AssignedOnDuty dummyAssignmentForNewEntry = null)
         {
-            var users = entry.Assignments.OrderBy(a => a.Interval.Start).Select(a => a.UserId).Distinct().ToList();
+            var dummyEnumerable = dummyAssignmentForNewEntry != null ? new[] { dummyAssignmentForNewEntry } : Enumerable.Empty<AssignedOnDuty>();
+            var users = entry.Assignments.Union(dummyEnumerable).OrderBy(a => a.Interval.Start).Select(a => a.UserId).Distinct().ToList();
             if (users.Count == 0)
             {
                 return;
@@ -104,7 +105,7 @@
             {
                 // Remove everything beginning from the start date except if a another user had substituted for this period
                 entry.Assignments.RemoveAll(a => a.Interval.Start >= e.Start && (!a.Substitution && e.UserId != a.UserId));
-                AssignEmptyTimeRange(entry);
+                AssignEmptyTimeRange(entry, new AssignedOnDuty { Duty = entry, UserId = e.UserId, Interval = new DateInterval(e.Start, e.Start) });
             }
         }
 
