@@ -5,6 +5,7 @@
     using CalendarBackend.Infrastructure.EventStore;
     using CalendarBackend.Infrastructure.ReadModel;
     using Microsoft.Extensions.DependencyInjection;
+    using Newtonsoft.Json;
     using System;
 
     public static class ServiceCollectionExtensions
@@ -16,7 +17,7 @@
                 throw new ArgumentNullException(nameof(services));
             }
 
-            services.AddSingleton<IEventStore>(sp => new EventStore.EventStore(path));
+            services.AddSingleton<IEventStore>(sp => new EventStore.EventStore(sp.GetRequiredService<JsonSerializer>(), path));
             services.AddScoped<IEventStream, EventStream>();
 
             services.AddScoped<OutOfOfficeReadModel>();

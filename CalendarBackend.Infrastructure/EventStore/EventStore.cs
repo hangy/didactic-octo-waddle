@@ -1,9 +1,7 @@
 ﻿namespace CalendarBackend.Infrastructure.EventStore
 {
-    using CalendarBackend.Domain.Events;
+    using Newtonsoft.Json;
     using System;
-    using System.Collections.Generic;
-    using System.IO;
     using System.IO.Compression;
     using System.Threading;
     using System.Threading.Tasks;
@@ -18,8 +16,13 @@
 
         private readonly ZipArchive zipArchive;
 
-        public EventStore(string path)
+        public EventStore(JsonSerializer jsonSerializer, string path)
         {
+            if (jsonSerializer == null)
+            {
+                throw new ArgumentNullException(nameof(jsonSerializer));
+            }
+
             if (string.IsNullOrWhiteSpace(path))
             {
                 throw new ArgumentNullException(nameof(path));
@@ -27,8 +30,8 @@
 
             this.zipArchive = ZipFile.Open(path, ZipArchiveMode.Update);
 
-            this.writer = new EventWriter(this.zipArchive, readWriteSemaphore);
-            this.reader = new EventReader(this.zipArchive, readWriteSemaphore);
+            this.writer = new EventWriter(jsonSerializer, this.zipArchive, readWriteSemaphore);
+            this.reader = new EventReader(jsonSerializer, this.zipArchive, readWriteSemaphore);
         }
 
         public void Dispose()

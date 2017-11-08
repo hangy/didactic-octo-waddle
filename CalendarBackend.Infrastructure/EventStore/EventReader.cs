@@ -1,24 +1,27 @@
 ﻿namespace CalendarBackend.Infrastructure.EventStore
 {
     using CalendarBackend.Domain.Events;
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.IO.Compression;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Linq;
-    using Newtonsoft.Json;
-    using System.IO;
 
     public class EventReader : IEventReader
     {
+        private readonly JsonSerializer jsonSerializer;
+
         private readonly SemaphoreSlim readWriteSemaphore;
 
-        private readonly ZipArchive ziprchive;
+        private readonly ZipArchive zipArchive;
 
-        public EventReader(ZipArchive ziprchive, SemaphoreSlim readWriteSemaphore)
+        public EventReader(JsonSerializer jsonSerializer, ZipArchive zipArchive, SemaphoreSlim readWriteSemaphore)
         {
-            this.ziprchive = ziprchive ?? throw new ArgumentNullException(nameof(ziprchive));
+            this.jsonSerializer = jsonSerializer ?? throw new ArgumentNullException(nameof(jsonSerializer));
+            this.zipArchive = zipArchive ?? throw new ArgumentNullException(nameof(zipArchive));
             this.readWriteSemaphore = readWriteSemaphore ?? throw new ArgumentNullException(nameof(readWriteSemaphore));
         }
 
@@ -32,7 +35,7 @@
             await this.readWriteSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
             try
             {
-                return this.ziprchive.Entries.OrderBy(e => e.FullName).Select(Transform).ToList();
+                return this.zipArchive.Entries.OrderBy(e => e.FullName).Select(this.Transform).ToList();
             }
             finally
             {
@@ -43,23 +46,21 @@
         /// <remarks>
         /// https://stackoverflow.com/a/17788118/11963
         /// </remarks>
-        private static StoredEvent DeserializeFromStream(Stream stream)
+        private StoredEvent DeserializeFromStream(Stream stream)
         {
-            var serializer = new JsonSerializer();
-
             using (var sr = new StreamReader(stream))
             using (var jsonTextReader = new JsonTextReader(sr))
             {
-                return serializer.Deserialize<StoredEvent>(jsonTextReader);
+                return this.jsonSerializer.Deserialize<StoredEvent>(jsonTextReader);
             }
         }
 
-        private static IDomainEvent Transform(ZipArchiveEntry arg)
+        private IDomainEvent DeserializeFromString(string value, Type type)
         {
-            using (var stream = arg.Open())
+            var sr = new StringReader(value);
+            using (var jsonReader = new JsonTextReader(sr))
             {
-                var storedEvent = DeserializeFromStream(stream);
-                return (IDomainEvent)JsonConvert.DeserializeObject(storedEvent.Json, Type.GetType(storedEvent.TypeName));
+                return (IDomainEvent)this.jsonSerializer.Deserialize(jsonReader, type);
             }
         }
 
@@ -68,6 +69,15 @@
             if (disposing)
             {
 
+            }
+        }
+
+        private IDomainEvent Transform(ZipArchiveEntry arg)
+        {
+            using (var stream = arg.Open())
+            {
+                var storedEvent = this.DeserializeFromStream(stream);
+                return this.DeserializeFromString(storedEvent.Json, Type.GetType(storedEvent.TypeName));
             }
         }
     }
