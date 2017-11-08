@@ -2,9 +2,11 @@
 {
     using CalendarBackend.Application.Commands;
     using CalendarBackend.Application.Queries;
+    using CalendarBackend.Models;
     using MediatR;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using NodaTime;
     using System;
     using System.Collections.Generic;
     using System.Threading;
@@ -38,11 +40,11 @@
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Get(Guid id, NullableLocalDate startAppointmentRange, NullableLocalDate endAppointmentRange, CancellationToken cancellationToken = default)
         {
             try
             {
-                var entry = await this.Mediator.Send(new GetConcreteDutyEntry(id), cancellationToken);
+                var entry = await this.Mediator.Send(new GetConcreteDutyEntry(id, startAppointmentRange?.Date, endAppointmentRange?.Date), cancellationToken);
 
                 return Ok(entry);
             }

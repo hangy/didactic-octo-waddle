@@ -3,6 +3,7 @@
     using CalendarBackend.Application.Queries;
     using CalendarBackend.Infrastructure.ReadModel;
     using MediatR;
+    using NodaTime;
     using System;
     using System.Linq;
     using System.Threading;
@@ -21,7 +22,24 @@
         {
             var entries = await this.model.GetEntriesAsync(cancellationToken).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
-            return entries.SingleOrDefault(e => e.Id == message.Id);
+            return entries
+                .Select(e => RemoveOutOfRangeAssignments(e, message.StartAppointmentRange, message.EndAppointmentRange))
+                .SingleOrDefault(e => e.Id == message.Id);
+        }
+
+        private static Duty RemoveOutOfRangeAssignments(Duty duty, LocalDate? startAppointmentRange, LocalDate? endAppointmentRange)
+        {
+            if (startAppointmentRange.HasValue)
+            {
+                duty.Assignments.RemoveAll(a => a.Interval.Start < startAppointmentRange.Value);
+            }
+
+            if (endAppointmentRange.HasValue)
+            {
+                duty.Assignments.RemoveAll(a => a.Interval.End > endAppointmentRange.Value);
+            }
+
+            return duty;
         }
     }
 }
