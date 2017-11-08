@@ -17,6 +17,7 @@
         {
             this.Mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
+
         public IMediator Mediator { get; }
 
         // DELETE api/values/5
@@ -57,14 +58,6 @@
         {
             var id = await this.Mediator.Send(value, cancellationToken);
             return this.CreatedAtAction(nameof(this.Get), new { id = id }, id);
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(string id, [FromBody]UpdateUserCommand value, CancellationToken cancellationToken = default)
-        {
-            await this.Mediator.Send(value, cancellationToken);
-            return this.RedirectToActionPermanent(nameof(this.Get), new { id = id });
         }
     }
 }

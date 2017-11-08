@@ -2,11 +2,10 @@
 {
     using CalendarBackend.Domain.AggregatesModel.UserAggregate;
     using System;
-    using System.Net.Mail;
 
     public class UserAddedEvent : IDomainEvent
     {
-        public UserAddedEvent(Guid id, string userName, string displayName, MailAddress mailAddress, UserColor color)
+        public UserAddedEvent(Guid id, string userName, string displayName, string mailAddress, UserColor color)
         {
             this.Id = id;
             this.UserName = userName;
@@ -21,7 +20,7 @@
 
         public Guid Id { get; }
 
-        public MailAddress MailAddress { get; }
+        public string MailAddress { get; }
 
         public string UserName { get; }
     }

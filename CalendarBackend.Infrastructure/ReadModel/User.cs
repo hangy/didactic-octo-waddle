@@ -1,6 +1,8 @@
 ﻿namespace CalendarBackend.Infrastructure.ReadModel
 {
+    using CalendarBackend.Domain.Events;
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Runtime.Serialization;
 
@@ -21,5 +23,7 @@
 
         [Required, StringLength(264), DataMember]
         public string UserName { get; set; }
+
+        public List<IDomainEvent> DomainEvents { get; set; }
     }
 }
