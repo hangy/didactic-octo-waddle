@@ -17,12 +17,12 @@
 
         private readonly SemaphoreSlim readWriteSemaphore;
 
-        private readonly ZipArchive zipArchive;
+        private readonly string path;
 
-        public EventWriter(JsonSerializer jsonSerializer, ZipArchive zipArchive, SemaphoreSlim readWriteSemaphore)
+        public EventWriter(JsonSerializer jsonSerializer, string path, SemaphoreSlim readWriteSemaphore)
         {
             this.jsonSerializer = jsonSerializer ?? throw new ArgumentNullException(nameof(jsonSerializer));
-            this.zipArchive = zipArchive ?? throw new ArgumentNullException(nameof(zipArchive));
+            this.path = path ?? throw new ArgumentNullException(nameof(path));
             this.readWriteSemaphore = readWriteSemaphore ?? throw new ArgumentNullException(nameof(readWriteSemaphore));
         }
 
@@ -37,13 +37,17 @@
             try
             {
                 var result = new List<IDomainEvent>();
-                var count = this.zipArchive.Entries.Count;
 
-                foreach (var @event in events)
+                using (var zipArchive = ZipFile.Open(this.path, ZipArchiveMode.Update))
                 {
-                    var entry = this.zipArchive.CreateEntry($"{++count:D10}.json", CompressionLevel.Optimal);
-                    this.WriteEntry(@event, entry);
-                    result.Add(@event);
+                    var count = zipArchive.Entries.Count;
+
+                    foreach (var @event in events)
+                    {
+                        var entry = zipArchive.CreateEntry($"{++count:D10}.json", CompressionLevel.Optimal);
+                        this.WriteEntry(@event, entry);
+                        result.Add(@event);
+                    }
                 }
 
                 return result;

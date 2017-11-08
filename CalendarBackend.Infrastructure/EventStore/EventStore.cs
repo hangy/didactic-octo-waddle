@@ -2,7 +2,6 @@
 {
     using Newtonsoft.Json;
     using System;
-    using System.IO.Compression;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -13,8 +12,6 @@
         private readonly SemaphoreSlim readWriteSemaphore = new SemaphoreSlim(1);
 
         private readonly IEventWriter writer;
-
-        private readonly ZipArchive zipArchive;
 
         public EventStore(JsonSerializer jsonSerializer, string path)
         {
@@ -28,10 +25,8 @@
                 throw new ArgumentNullException(nameof(path));
             }
 
-            this.zipArchive = ZipFile.Open(path, ZipArchiveMode.Update);
-
-            this.writer = new EventWriter(jsonSerializer, this.zipArchive, readWriteSemaphore);
-            this.reader = new EventReader(jsonSerializer, this.zipArchive, readWriteSemaphore);
+            this.writer = new EventWriter(jsonSerializer, path, readWriteSemaphore);
+            this.reader = new EventReader(jsonSerializer, path, readWriteSemaphore);
         }
 
         public void Dispose()
@@ -57,7 +52,6 @@
                 this.readWriteSemaphore?.Dispose();
                 this.writer?.Dispose();
                 this.reader?.Dispose();
-                this.zipArchive?.Dispose();
             }
         }
     }

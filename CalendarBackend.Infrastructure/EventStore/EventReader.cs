@@ -16,12 +16,12 @@
 
         private readonly SemaphoreSlim readWriteSemaphore;
 
-        private readonly ZipArchive zipArchive;
+        private readonly string path;
 
-        public EventReader(JsonSerializer jsonSerializer, ZipArchive zipArchive, SemaphoreSlim readWriteSemaphore)
+        public EventReader(JsonSerializer jsonSerializer, string path, SemaphoreSlim readWriteSemaphore)
         {
             this.jsonSerializer = jsonSerializer ?? throw new ArgumentNullException(nameof(jsonSerializer));
-            this.zipArchive = zipArchive ?? throw new ArgumentNullException(nameof(zipArchive));
+            this.path = path ?? throw new ArgumentNullException(nameof(path));
             this.readWriteSemaphore = readWriteSemaphore ?? throw new ArgumentNullException(nameof(readWriteSemaphore));
         }
 
@@ -35,7 +35,10 @@
             await this.readWriteSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
             try
             {
-                return this.zipArchive.Entries.OrderBy(e => e.FullName).Select(this.Transform).ToList();
+                using (var zipArchive = ZipFile.Open(this.path, ZipArchiveMode.Read))
+                {
+                    return zipArchive.Entries.OrderBy(e => e.FullName).Select(this.Transform).ToList();
+                }
             }
             finally
             {
