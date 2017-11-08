@@ -1,24 +1,32 @@
 ﻿namespace CalendarBackend.Infrastructure.EventStore
 {
-    using CalendarBackend.Domain.Events;
+    using Newtonsoft.Json;
     using System;
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
     public class EventStore : IEventStore, IDisposable
     {
-
         private readonly IEventReader reader;
+
         private readonly SemaphoreSlim readWriteSemaphore = new SemaphoreSlim(1);
 
         private readonly IEventWriter writer;
 
-        public EventStore()
+        public EventStore(JsonSerializer jsonSerializer, string path)
         {
-            var sharedList = new List<IDomainEvent>();
-            this.writer = new EventWriter(sharedList, readWriteSemaphore);
-            this.reader = new EventReader(sharedList, readWriteSemaphore);
+            if (jsonSerializer == null)
+            {
+                throw new ArgumentNullException(nameof(jsonSerializer));
+            }
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
+
+            this.writer = new EventWriter(jsonSerializer, path, readWriteSemaphore);
+            this.reader = new EventReader(jsonSerializer, path, readWriteSemaphore);
         }
 
         public void Dispose()

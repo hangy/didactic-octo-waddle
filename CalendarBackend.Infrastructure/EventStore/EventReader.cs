@@ -1,20 +1,27 @@
 ﻿namespace CalendarBackend.Infrastructure.EventStore
 {
     using CalendarBackend.Domain.Events;
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.IO;
+    using System.IO.Compression;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
 
     public class EventReader : IEventReader
     {
-        private readonly IReadOnlyList<IDomainEvent> list;
+        private readonly JsonSerializer jsonSerializer;
 
         private readonly SemaphoreSlim readWriteSemaphore;
 
-        public EventReader(IReadOnlyList<IDomainEvent> list, SemaphoreSlim readWriteSemaphore)
+        private readonly string path;
+
+        public EventReader(JsonSerializer jsonSerializer, string path, SemaphoreSlim readWriteSemaphore)
         {
-            this.list = list ?? throw new ArgumentNullException(nameof(list));
+            this.jsonSerializer = jsonSerializer ?? throw new ArgumentNullException(nameof(jsonSerializer));
+            this.path = path ?? throw new ArgumentNullException(nameof(path));
             this.readWriteSemaphore = readWriteSemaphore ?? throw new ArgumentNullException(nameof(readWriteSemaphore));
         }
 
@@ -28,11 +35,35 @@
             await this.readWriteSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
             try
             {
-                return this.list;
+                using (var zipArchive = ZipFile.Open(this.path, ZipArchiveMode.Read))
+                {
+                    return zipArchive.Entries.OrderBy(e => e.FullName).Select(this.Transform).ToList();
+                }
             }
             finally
             {
                 this.readWriteSemaphore.Release();
+            }
+        }
+
+        /// <remarks>
+        /// https://stackoverflow.com/a/17788118/11963
+        /// </remarks>
+        private StoredEvent DeserializeFromStream(Stream stream)
+        {
+            using (var sr = new StreamReader(stream))
+            using (var jsonTextReader = new JsonTextReader(sr))
+            {
+                return this.jsonSerializer.Deserialize<StoredEvent>(jsonTextReader);
+            }
+        }
+
+        private IDomainEvent DeserializeFromString(string value, Type type)
+        {
+            var sr = new StringReader(value);
+            using (var jsonReader = new JsonTextReader(sr))
+            {
+                return (IDomainEvent)this.jsonSerializer.Deserialize(jsonReader, type);
             }
         }
 
@@ -41,6 +72,15 @@
             if (disposing)
             {
 
+            }
+        }
+
+        private IDomainEvent Transform(ZipArchiveEntry arg)
+        {
+            using (var stream = arg.Open())
+            {
+                var storedEvent = this.DeserializeFromStream(stream);
+                return this.DeserializeFromString(storedEvent.Json, Type.GetType(storedEvent.TypeName));
             }
         }
     }

@@ -1,20 +1,28 @@
 ﻿namespace CalendarBackend.Infrastructure.EventStore
 {
     using CalendarBackend.Domain.Events;
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
+    using System.IO;
+    using System.IO.Compression;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
     public class EventWriter : IEventWriter
     {
-        private readonly IList<IDomainEvent> list;
+        private readonly JsonSerializer jsonSerializer;
 
         private readonly SemaphoreSlim readWriteSemaphore;
 
-        public EventWriter(IList<IDomainEvent> list, SemaphoreSlim readWriteSemaphore)
+        private readonly string path;
+
+        public EventWriter(JsonSerializer jsonSerializer, string path, SemaphoreSlim readWriteSemaphore)
         {
-            this.list = list ?? throw new ArgumentNullException(nameof(list));
+            this.jsonSerializer = jsonSerializer ?? throw new ArgumentNullException(nameof(jsonSerializer));
+            this.path = path ?? throw new ArgumentNullException(nameof(path));
             this.readWriteSemaphore = readWriteSemaphore ?? throw new ArgumentNullException(nameof(readWriteSemaphore));
         }
 
@@ -29,10 +37,17 @@
             try
             {
                 var result = new List<IDomainEvent>();
-                foreach (var @event in events)
+
+                using (var zipArchive = ZipFile.Open(this.path, ZipArchiveMode.Update))
                 {
-                    this.list.Add(@event);
-                    result.Add(@event);
+                    var count = zipArchive.Entries.Count;
+
+                    foreach (var @event in events)
+                    {
+                        var entry = zipArchive.CreateEntry($"{++count:D10}.json", CompressionLevel.Optimal);
+                        this.WriteEntry(@event, entry);
+                        result.Add(@event);
+                    }
                 }
 
                 return result;
@@ -52,6 +67,41 @@
         {
             if (disposing)
             {
+            }
+        }
+
+        /// <remarks>
+        /// https://stackoverflow.com/a/17788118/11963
+        /// </remarks>
+        private void SerializeToStream(Stream stream, StoredEvent storedEvent)
+        {
+            using (var sw = new StreamWriter(stream))
+            using (var jsonTextWriter = new JsonTextWriter(sw))
+            {
+                this.jsonSerializer.Serialize(jsonTextWriter, storedEvent);
+            }
+        }
+
+        private string SerializeToString(IDomainEvent @event)
+        {
+            var sb = new StringBuilder(128);
+            var sw = new StringWriter(sb, CultureInfo.InvariantCulture);
+            using (var jsonWriter = new JsonTextWriter(sw))
+            {
+                jsonWriter.Formatting = this.jsonSerializer.Formatting;
+                this.jsonSerializer.Serialize(jsonWriter, @event, null);
+            }
+
+            return sw.ToString();
+        }
+
+        private StoredEvent Transform(IDomainEvent @event) => new StoredEvent(@event.GetType().AssemblyQualifiedName, this.SerializeToString(@event));
+
+        private void WriteEntry(IDomainEvent @event, ZipArchiveEntry entry)
+        {
+            using (var stream = entry.Open())
+            {
+                this.SerializeToStream(stream, this.Transform(@event));
             }
         }
     }
