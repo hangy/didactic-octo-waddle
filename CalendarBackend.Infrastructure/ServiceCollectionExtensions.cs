@@ -1,5 +1,6 @@
 ﻿namespace CalendarBackend.Infrastructure
 {
+    using CalendarBackend.Domain.AggregatesModel.DutyAggregate;
     using CalendarBackend.Domain.AggregatesModel.OutOfOfficeAggregate;
     using CalendarBackend.Infrastructure.EventStore;
     using CalendarBackend.Infrastructure.ReadModel;
@@ -19,8 +20,10 @@
             services.AddScoped<IEventStream, EventStream>();
 
             services.AddScoped<OutOfOfficeReadModel>();
+            services.AddScoped<DutyReadModel>();
 
             services.AddScoped<IOutOfOfficeRepository, OutOfOfficeRepository>();
+            services.AddScoped<IDutyRepository, DutyRepository>();
         }
     }
 }

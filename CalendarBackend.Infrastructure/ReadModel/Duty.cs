@@ -8,19 +8,19 @@
     using System.Runtime.Serialization;
 
     [DataContract]
-    public class OutOfOffice
+    public class Duty
     {
         [Required, Key, DataMember]
         public Guid Id { get; set; }
 
         [Required, DataMember]
-        public Interval Interval { get; set; }
-
-        [StringLength(10, MinimumLength = 0), DataMember]
-        public string Reason { get; set; }
+        public string Name { get; set; }
 
         [Required, DataMember]
-        public string UserId { get; set; }
+        public DateInterval Interval { get; set; }
+
+        [DataMember]
+        public List<AssignedOnDuty> Assignments { get; set; }
 
         public List<IDomainEvent> DomainEvents { get; set; }
     }
