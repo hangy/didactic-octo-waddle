@@ -1,6 +1,7 @@
 ﻿namespace CalendarBackend
 {
     using CalendarBackend.Authorization;
+    using CalendarBackend.Hubs;
     using CalendarBackend.Infrastructure;
     using MediatR;
     using Microsoft.AspNetCore.Authorization;
@@ -36,6 +37,11 @@
 
             app.UseStaticFiles();
 
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<Event>("event");
+            });
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -53,6 +59,8 @@
                 js.ConfigureForNodaTime(DateTimeZoneProviders.Serialization).WithIsoIntervalConverter();
                 return js;
             });
+
+            services.AddSignalR();
 
             services.AddMvc()
                 .AddJsonOptions(options =>
