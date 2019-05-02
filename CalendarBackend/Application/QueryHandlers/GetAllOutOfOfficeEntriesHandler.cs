@@ -9,7 +9,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class GetAllOutOfOfficeEntriesHandler : ICancellableAsyncRequestHandler<GetAllOutOfOfficeEntries, IEnumerable<OutOfOffice>>
+    public class GetAllOutOfOfficeEntriesHandler : IRequestHandler<GetAllOutOfOfficeEntries, IEnumerable<OutOfOffice>>
     {
         public GetAllOutOfOfficeEntriesHandler(OutOfOfficeReadModel model)
         {

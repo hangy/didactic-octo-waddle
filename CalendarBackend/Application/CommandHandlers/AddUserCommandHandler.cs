@@ -8,7 +8,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class AddUserCommandHandler : ICancellableAsyncRequestHandler<AddUserCommand, Guid>
+    public class AddUserCommandHandler : IRequestHandler<AddUserCommand, Guid>
     {
         private readonly IUserRepository userRepository;
 

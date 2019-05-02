@@ -8,7 +8,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class GetConcreteOutOfOfficeEntryHandler : ICancellableAsyncRequestHandler<GetConcreteOutOfOfficeEntry, OutOfOffice>
+    public class GetConcreteOutOfOfficeEntryHandler : IRequestHandler<GetConcreteOutOfOfficeEntry, OutOfOffice>
     {
         private readonly OutOfOfficeReadModel model;
 

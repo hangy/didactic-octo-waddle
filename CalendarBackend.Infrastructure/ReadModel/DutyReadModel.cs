@@ -10,7 +10,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class DutyReadModel : IAsyncNotificationHandler<IDomainEvent>
+    public class DutyReadModel : INotificationHandler<IDomainEvent>
     {
         private readonly IList<Duty> entries = new List<Duty>();
 
@@ -33,17 +33,17 @@
             return this.entries;
         }
 
-        public async Task Handle(IDomainEvent notification)
+        public async Task Handle(IDomainEvent notification, CancellationToken cancellationToken)
         {
             if (!this.initialized)
             {
-                await this.InitializeAsync().ConfigureAwait(false);
+                await this.InitializeAsync(cancellationToken).ConfigureAwait(false);
             }
 
-            await this.HandleAsync(notification);
+            await HandleAsync(notification, cancellationToken).ConfigureAwait(false);
         }
 
-        private static void AssignEmptyTimeRange(Duty entry, AssignedOnDuty dummyAssignmentForNewEntry = null)
+        private static void AssignEmptyTimeRange(Duty entry, AssignedOnDuty? dummyAssignmentForNewEntry = null)
         {
             var dummyEnumerable = dummyAssignmentForNewEntry != null ? new[] { dummyAssignmentForNewEntry } : Enumerable.Empty<AssignedOnDuty>();
             var users = entry.Assignments.Union(dummyEnumerable).OrderBy(a => a.Interval.Start).Select(a => a.UserId).Distinct().ToList();

@@ -9,7 +9,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class GetAllDutyEntriesHandler : ICancellableAsyncRequestHandler<GetAllDutyEntries, IEnumerable<Duty>>
+    public class GetAllDutyEntriesHandler : IRequestHandler<GetAllDutyEntries, IEnumerable<Duty>>
     {
         public GetAllDutyEntriesHandler(DutyReadModel model)
         {

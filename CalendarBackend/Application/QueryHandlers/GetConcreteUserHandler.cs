@@ -8,7 +8,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class GetConcreteUserHandler : ICancellableAsyncRequestHandler<GetConcreteUser, User>
+    public class GetConcreteUserHandler : IRequestHandler<GetConcreteUser, User>
     {
         private readonly UserReadModel model;
 

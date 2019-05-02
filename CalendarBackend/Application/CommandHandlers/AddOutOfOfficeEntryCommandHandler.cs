@@ -7,7 +7,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class AddOutOfOfficeEntryCommandHandler : ICancellableAsyncRequestHandler<AddOutOfOfficeEntryCommand, Guid>
+    public class AddOutOfOfficeEntryCommandHandler : IRequestHandler<AddOutOfOfficeEntryCommand, Guid>
     {
         private readonly IOutOfOfficeRepository outOfOfficeRepository;
 

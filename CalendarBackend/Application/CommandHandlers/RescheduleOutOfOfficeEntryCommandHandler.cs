@@ -7,7 +7,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class RescheduleOutOfOfficeEntryCommandHandler : ICancellableAsyncRequestHandler<RescheduleOutOfOfficeEntryCommand>
+    public class RescheduleOutOfOfficeEntryCommandHandler : IRequestHandler<RescheduleOutOfOfficeEntryCommand>
     {
         private readonly IOutOfOfficeRepository outOfOfficeRepository;
 
@@ -16,7 +16,7 @@
             this.outOfOfficeRepository = outOfOfficeRepository ?? throw new ArgumentNullException(nameof(outOfOfficeRepository));
         }
 
-        public async Task Handle(RescheduleOutOfOfficeEntryCommand message, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(RescheduleOutOfOfficeEntryCommand message, CancellationToken cancellationToken)
         {
             var outOfOffice = await this.outOfOfficeRepository.GetAsync(message.Id, cancellationToken).ConfigureAwait(false);
             if (outOfOffice == null)
@@ -26,6 +26,7 @@
 
             outOfOffice.RescheduleTo(message.Interval);
             await this.outOfOfficeRepository.UpdateAsync(outOfOffice, cancellationToken).ConfigureAwait(false);
+            return Unit.Value;
         }
     }
 }

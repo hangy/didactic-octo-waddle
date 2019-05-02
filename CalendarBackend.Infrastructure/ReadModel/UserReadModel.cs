@@ -8,7 +8,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class UserReadModel : IAsyncNotificationHandler<IDomainEvent>
+    public class UserReadModel : INotificationHandler<IDomainEvent>
     {
         private readonly IList<User> entries = new List<User>();
 
@@ -31,14 +31,14 @@
             return this.entries;
         }
 
-        public async Task Handle(IDomainEvent notification)
+        public async Task Handle(IDomainEvent notification, CancellationToken cancellationToken)
         {
             if (!this.initialized)
             {
-                await this.InitializeAsync().ConfigureAwait(false);
+                await this.InitializeAsync(cancellationToken).ConfigureAwait(false);
             }
 
-            await this.HandleAsync(notification);
+            await this.HandleAsync(notification, cancellationToken).ConfigureAwait(false);
         }
 
         private async Task HandleAsync(IDomainEvent @event, CancellationToken cancellationToken = default)

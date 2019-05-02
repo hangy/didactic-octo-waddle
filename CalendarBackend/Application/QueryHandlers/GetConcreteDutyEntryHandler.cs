@@ -9,7 +9,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class GetConcreteDutyEntryHandler : ICancellableAsyncRequestHandler<GetConcreteDutyEntry, Duty>
+    public class GetConcreteDutyEntryHandler : IRequestHandler<GetConcreteDutyEntry, Duty>
     {
         private readonly DutyReadModel model;
 

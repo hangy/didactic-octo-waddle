@@ -7,7 +7,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class AddDutySubstitutionCommandHandler : ICancellableAsyncRequestHandler<AddDutySubstitutionCommand>
+    public class AddDutySubstitutionCommandHandler : IRequestHandler<AddDutySubstitutionCommand>
     {
         private readonly IDutyRepository dutyRepository;
 
@@ -16,7 +16,7 @@
             this.dutyRepository = dutyRepository ?? throw new ArgumentNullException(nameof(dutyRepository));
         }
 
-        public async Task Handle(AddDutySubstitutionCommand message, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(AddDutySubstitutionCommand message, CancellationToken cancellationToken)
         {
             var duty = await this.dutyRepository.GetAsync(message.DutyId, cancellationToken).ConfigureAwait(false);
             if (duty == null)
@@ -26,6 +26,7 @@
 
             duty.AddSubstitute(message.UserId, message.Interval);
             await this.dutyRepository.UpdateAsync(duty, cancellationToken).ConfigureAwait(false);
+            return Unit.Value;
         }
     }
 }

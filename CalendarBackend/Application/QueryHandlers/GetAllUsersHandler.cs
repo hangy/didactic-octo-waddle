@@ -8,7 +8,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class GetAllUsersHandler : ICancellableAsyncRequestHandler<GetAllUsers, IEnumerable<User>>
+    public class GetAllUsersHandler : IRequestHandler<GetAllUsers, IEnumerable<User>>
     {
         public GetAllUsersHandler(UserReadModel model)
         {

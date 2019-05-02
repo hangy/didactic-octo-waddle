@@ -9,7 +9,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class OutOfOfficeReadModel : IAsyncNotificationHandler<IDomainEvent>
+    public class OutOfOfficeReadModel : INotificationHandler<IDomainEvent>
     {
         private readonly IList<OutOfOffice> entries = new List<OutOfOffice>();
 
@@ -32,14 +32,14 @@
             return this.entries;
         }
 
-        public async Task Handle(IDomainEvent notification)
+        public async Task Handle(IDomainEvent notification, CancellationToken cancellationToken)
         {
             if (!this.initialized)
             {
-                await this.InitializeAsync().ConfigureAwait(false);
+                await this.InitializeAsync(cancellationToken).ConfigureAwait(false);
             }
 
-            await this.HandleAsync(notification);
+            await this.HandleAsync(notification, cancellationToken).ConfigureAwait(false);
         }
 
         private void Handle(OutOfOfficeEntryCreatedEvent e)

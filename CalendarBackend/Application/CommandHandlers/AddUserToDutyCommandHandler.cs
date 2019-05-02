@@ -7,7 +7,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class AddUserToDutyCommandHandler : ICancellableAsyncRequestHandler<AddUserToDutyCommand>
+    public class AddUserToDutyCommandHandler : IRequestHandler<AddUserToDutyCommand>
     {
         private readonly IDutyRepository dutyRepository;
 
@@ -16,7 +16,7 @@
             this.dutyRepository = dutyRepository ?? throw new ArgumentNullException(nameof(dutyRepository));
         }
 
-        public async Task Handle(AddUserToDutyCommand message, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(AddUserToDutyCommand message, CancellationToken cancellationToken)
         {
             var duty = await this.dutyRepository.GetAsync(message.DutyId, cancellationToken).ConfigureAwait(false);
             if (duty == null)
@@ -26,6 +26,7 @@
 
             duty.AddUser(message.UserId, message.Start);
             await this.dutyRepository.UpdateAsync(duty, cancellationToken).ConfigureAwait(false);
+            return Unit.Value;
         }
     }
 }

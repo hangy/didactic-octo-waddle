@@ -91,10 +91,9 @@
 
         private static void ConfigureMediatR(IServiceCollection services)
         {
-            services.AddScoped<SingleInstanceFactory>(p => t => p.GetRequiredService(t));
-            services.AddScoped<MultiInstanceFactory>(p => t => p.GetServices(t));
+            services.AddScoped<ServiceFactory>(p => t => p.GetRequiredService(t));
 
-            services.AddMediatR();
+            services.AddMediatR(typeof(Startup).Assembly, typeof(Domain.SeedWork.IAggregateRoot).Assembly, typeof(Infrastructure.EventStore.IEventStore).Assembly);
         }
     }
 }

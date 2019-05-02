@@ -7,7 +7,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class AddDutyEntryCommandHandler : ICancellableAsyncRequestHandler<AddDutyEntryCommand, Guid>
+    public class AddDutyEntryCommandHandler : IRequestHandler<AddDutyEntryCommand, Guid>
     {
         private readonly IDutyRepository dutyRepository;
 

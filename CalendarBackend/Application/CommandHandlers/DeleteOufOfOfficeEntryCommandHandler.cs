@@ -7,7 +7,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class DeleteOufOfOfficeEntryCommandHandler : ICancellableAsyncRequestHandler<DeleteOufOfOfficeEntryCommand>
+    public class DeleteOufOfOfficeEntryCommandHandler : IRequestHandler<DeleteOufOfOfficeEntryCommand>
     {
         private readonly IOutOfOfficeRepository outOfOfficeRepository;
 
@@ -16,7 +16,7 @@
             this.outOfOfficeRepository = outOfOfficeRepository ?? throw new ArgumentNullException(nameof(outOfOfficeRepository));
         }
 
-        public async Task Handle(DeleteOufOfOfficeEntryCommand message, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteOufOfOfficeEntryCommand message, CancellationToken cancellationToken)
         {
             var outOfOffice = await this.outOfOfficeRepository.GetAsync(message.Id, cancellationToken).ConfigureAwait(false);
             if (outOfOffice == null)
@@ -26,6 +26,7 @@
 
             outOfOffice.SetCancelledStatus();
             await this.outOfOfficeRepository.UpdateAsync(outOfOffice, cancellationToken).ConfigureAwait(false);
+            return Unit.Value;
         }
     }
 }
