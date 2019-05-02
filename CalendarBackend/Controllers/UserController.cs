@@ -24,7 +24,7 @@
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken = default)
         {
-            await this.Mediator.Send(new DeleteUserCommand(id), cancellationToken);
+            await Mediator.Send(new DeleteUserCommand(id), cancellationToken).ConfigureAwait(false);
             return this.NoContent();
         }
 
@@ -32,7 +32,7 @@
         [HttpGet]
         public async Task<IActionResult> Get(CancellationToken cancellationToken = default)
         {
-            var entries = await this.Mediator.Send(new GetAllUsers(), cancellationToken);
+            var entries = await Mediator.Send(new GetAllUsers(), cancellationToken).ConfigureAwait(false);
             return this.Ok(entries);
         }
 
@@ -42,7 +42,7 @@
         {
             try
             {
-                var entries = await this.Mediator.Send(new GetConcreteUser(id), cancellationToken);
+                var entries = await Mediator.Send(new GetConcreteUser(id), cancellationToken).ConfigureAwait(false);
 
                 return Ok(entries);
             }
@@ -56,7 +56,7 @@
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]AddUserCommand value, CancellationToken cancellationToken = default)
         {
-            var id = await this.Mediator.Send(value, cancellationToken);
+            var id = await Mediator.Send(value, cancellationToken).ConfigureAwait(false);
             return this.CreatedAtAction(nameof(this.Get), new { id = id }, id);
         }
     }

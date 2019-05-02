@@ -28,6 +28,7 @@
         public void Dispose()
         {
             this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         public async Task<IReadOnlyList<IDomainEvent>> ReadAllAsync(CancellationToken cancellationToken = default)
@@ -35,10 +36,8 @@
             await this.readWriteSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
             try
             {
-                using (var zipArchive = ZipFile.Open(this.path, ZipArchiveMode.Read))
-                {
-                    return zipArchive.Entries.OrderBy(e => e.FullName).Select(this.Transform).ToList();
-                }
+                using var zipArchive = ZipFile.Open(this.path, ZipArchiveMode.Read);
+                return zipArchive.Entries.OrderBy(e => e.FullName).Select(this.Transform).ToList();
             }
             finally
             {
@@ -51,23 +50,19 @@
         /// </remarks>
         private StoredEvent DeserializeFromStream(Stream stream)
         {
-            using (var sr = new StreamReader(stream))
-            using (var jsonTextReader = new JsonTextReader(sr))
-            {
-                return this.jsonSerializer.Deserialize<StoredEvent>(jsonTextReader);
-            }
+            using var sr = new StreamReader(stream);
+            using var jsonTextReader = new JsonTextReader(sr);
+            return this.jsonSerializer.Deserialize<StoredEvent>(jsonTextReader);
         }
 
         private IDomainEvent DeserializeFromString(string value, Type type)
         {
             var sr = new StringReader(value);
-            using (var jsonReader = new JsonTextReader(sr))
-            {
-                return (IDomainEvent)this.jsonSerializer.Deserialize(jsonReader, type);
-            }
+            using var jsonReader = new JsonTextReader(sr);
+            return (IDomainEvent)this.jsonSerializer.Deserialize(jsonReader, type);
         }
 
-        private void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -77,11 +72,9 @@
 
         private IDomainEvent Transform(ZipArchiveEntry arg)
         {
-            using (var stream = arg.Open())
-            {
-                var storedEvent = this.DeserializeFromStream(stream);
-                return this.DeserializeFromString(storedEvent.Json, Type.GetType(storedEvent.TypeName));
-            }
+            using var stream = arg.Open();
+            var storedEvent = this.DeserializeFromStream(stream);
+            return this.DeserializeFromString(storedEvent.Json, Type.GetType(storedEvent.TypeName));
         }
     }
 }

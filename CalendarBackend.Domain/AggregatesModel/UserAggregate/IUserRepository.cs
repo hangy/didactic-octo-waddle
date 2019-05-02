@@ -9,6 +9,6 @@
     {
         Task<User> AddAsync(User userId, CancellationToken cancellationToken = default);
 
-        Task<User> GetAsync(Guid userId, CancellationToken cancellationToken = default);
+        Task<User?> GetAsync(Guid userId, CancellationToken cancellationToken = default);
     }
 }

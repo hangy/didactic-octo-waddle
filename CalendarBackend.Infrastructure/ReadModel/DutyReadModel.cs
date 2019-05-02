@@ -136,8 +136,10 @@
             }
         }
 
-        private async Task HandleAsync(IDomainEvent @event, CancellationToken cancellationToken = default)
+        private Task HandleAsync(IDomainEvent @event, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             switch (@event)
             {
                 case DutyCreatedEvent e:
@@ -153,6 +155,8 @@
                     this.Handle(e);
                     break;
             }
+
+            return Task.CompletedTask;
         }
 
         private async Task InitializeAsync(CancellationToken cancellationToken = default)

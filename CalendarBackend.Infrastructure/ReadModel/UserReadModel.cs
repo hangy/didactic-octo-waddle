@@ -41,14 +41,18 @@
             await this.HandleAsync(notification, cancellationToken).ConfigureAwait(false);
         }
 
-        private async Task HandleAsync(IDomainEvent @event, CancellationToken cancellationToken = default)
+        private Task HandleAsync(IDomainEvent @event, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             switch (@event)
             {
                 case UserAddedEvent e:
                     this.entries.Add(new User { Id = e.Id, UserName = e.UserName, DisplayName = e.DisplayName, MailAddress = e.MailAddress, Color = e.Color?.Color });
                     break;
             }
+
+            return Task.CompletedTask;
         }
 
         private async Task InitializeAsync(CancellationToken cancellationToken = default)

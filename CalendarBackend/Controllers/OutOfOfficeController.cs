@@ -31,7 +31,7 @@
         [HttpGet]
         public async Task<IActionResult> Get(CancellationToken cancellationToken = default)
         {
-            var entries = await this.Mediator.Send(new GetAllOutOfOfficeEntries(), cancellationToken);
+            var entries = await Mediator.Send(new GetAllOutOfOfficeEntries(), cancellationToken).ConfigureAwait(false);
             return this.Ok(entries);
         }
 
@@ -41,7 +41,7 @@
         {
             try
             {
-                var entry = await this.Mediator.Send(new GetConcreteOutOfOfficeEntry(id), cancellationToken);
+                var entry = await Mediator.Send(new GetConcreteOutOfOfficeEntry(id), cancellationToken).ConfigureAwait(false);
 
                 return Ok(entry);
             }
@@ -55,7 +55,7 @@
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]AddOutOfOfficeEntryCommand value, CancellationToken cancellationToken = default)
         {
-            var id = await this.Mediator.Send(value, cancellationToken);
+            var id = await Mediator.Send(value, cancellationToken).ConfigureAwait(false);
             return this.CreatedAtAction(nameof(this.Get), new { id = id }, id);
         }
 
@@ -63,7 +63,7 @@
         [HttpPut]
         public async Task<IActionResult> Reschedule([FromBody]RescheduleOutOfOfficeEntryCommand value, CancellationToken cancellationToken = default)
         {
-            await this.Mediator.Send(value, cancellationToken);
+            await Mediator.Send(value, cancellationToken).ConfigureAwait(false);
             return this.RedirectToActionPermanent(nameof(this.Get), new { id = value.Id });
         }
         
@@ -71,7 +71,7 @@
         [HttpPut]
         public async Task<IActionResult> Rereason([FromBody]RereasonOutOfOfficeEntryCommand value, CancellationToken cancellationToken = default)
         {
-            await this.Mediator.Send(value, cancellationToken);
+            await Mediator.Send(value, cancellationToken).ConfigureAwait(false);
             return this.RedirectToActionPermanent(nameof(this.Get), new { id = value.Id });
         }
     }

@@ -22,16 +22,11 @@
 
         public async Task<User> AddAsync(User user, CancellationToken cancellationToken = default)
         {
-            if (user == null)
-            {
-                throw new ArgumentNullException(nameof(user));
-            }
-
             await this.eventStream.WriteEventsAsync(user.DomainEvents, cancellationToken).ConfigureAwait(false);
             return user;
         }
 
-        public async Task<User> GetAsync(Guid userId, CancellationToken cancellationToken = default)
+        public async Task<User?> GetAsync(Guid userId, CancellationToken cancellationToken = default)
         {
             var entries = await this.readModel.GetEntriesAsync(cancellationToken).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();

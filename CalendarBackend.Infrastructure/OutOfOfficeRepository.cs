@@ -21,16 +21,11 @@
 
         public async Task<OutOfOffice> AddAsync(OutOfOffice outOfOffice, CancellationToken cancellationToken = default)
         {
-            if (outOfOffice == null)
-            {
-                throw new ArgumentNullException(nameof(outOfOffice));
-            }
-
             await this.eventStream.WriteEventsAsync(outOfOffice.DomainEvents, cancellationToken).ConfigureAwait(false);
             return outOfOffice;
         }
 
-        public async Task<OutOfOffice> GetAsync(Guid outOfOfficeId, CancellationToken cancellationToken = default)
+        public async Task<OutOfOffice?> GetAsync(Guid outOfOfficeId, CancellationToken cancellationToken = default)
         {
             var entries = await this.readModel.GetEntriesAsync(cancellationToken).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
@@ -40,11 +35,6 @@
 
         public async Task<int> UpdateAsync(OutOfOffice outOfOffice, CancellationToken cancellationToken = default)
         {
-            if (outOfOffice == null)
-            {
-                throw new ArgumentNullException(nameof(outOfOffice));
-            }
-
             // We currently don't have a real change tracker, so just get the current entity and add new events.
             var current = await this.GetAsync(outOfOffice.Id, cancellationToken).ConfigureAwait(false);
             if (current == null)

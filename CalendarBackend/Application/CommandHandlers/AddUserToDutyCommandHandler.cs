@@ -25,7 +25,7 @@
             }
 
             duty.AddUser(message.UserId, message.Start);
-            await this.dutyRepository.UpdateAsync(duty, cancellationToken).ConfigureAwait(false);
+            _ = await this.dutyRepository.UpdateAsync(duty, cancellationToken).ConfigureAwait(false);
             return Unit.Value;
         }
     }

@@ -22,8 +22,9 @@
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+#pragma warning disable CA1822 // Mark members as static - This method gets called by the runtime.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+#pragma warning restore CA1822 // Mark members as static - This method gets called by the runtime.
         {
             if (env.IsDevelopment())
             {
@@ -39,7 +40,7 @@
 
             app.UseSignalR(routes =>
             {
-                routes.MapHub<Event>("event");
+                routes.MapHub<Event>("/event");
             });
 
             app.UseMvc(routes =>

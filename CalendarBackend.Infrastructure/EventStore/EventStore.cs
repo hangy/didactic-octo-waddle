@@ -45,7 +45,7 @@
             return Task.FromResult(this.writer);
         }
 
-        private void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {

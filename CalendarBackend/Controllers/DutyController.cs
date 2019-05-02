@@ -26,7 +26,7 @@
         [HttpPost]
         public async Task<IActionResult> AddUser([FromBody]AddUserToDutyCommand value, CancellationToken cancellationToken = default)
         {
-            await this.Mediator.Send(value, cancellationToken);
+            await Mediator.Send(value, cancellationToken).ConfigureAwait(false);
             return this.RedirectToActionPermanent(nameof(this.Get), new { id = value.DutyId });
         }
 
@@ -34,7 +34,7 @@
         [HttpGet]
         public async Task<IActionResult> Get(CancellationToken cancellationToken = default)
         {
-            var entries = await this.Mediator.Send(new GetAllDutyEntries(), cancellationToken);
+            var entries = await Mediator.Send(new GetAllDutyEntries(), cancellationToken).ConfigureAwait(false);
             return this.Ok(entries);
         }
 
@@ -44,7 +44,7 @@
         {
             try
             {
-                var entry = await this.Mediator.Send(new GetConcreteDutyEntry(id, startAppointmentRange?.Date, endAppointmentRange?.Date), cancellationToken);
+                var entry = await Mediator.Send(new GetConcreteDutyEntry(id, startAppointmentRange?.Date, endAppointmentRange?.Date), cancellationToken).ConfigureAwait(false);
 
                 return Ok(entry);
             }
@@ -58,7 +58,7 @@
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]AddDutyEntryCommand value, CancellationToken cancellationToken = default)
         {
-            var id = await this.Mediator.Send(value, cancellationToken);
+            var id = await Mediator.Send(value, cancellationToken).ConfigureAwait(false);
             return this.CreatedAtAction(nameof(this.Get), new { id = id }, id);
         }
 
@@ -66,7 +66,7 @@
         [HttpDelete]
         public async Task<IActionResult> RemoveUser([FromBody]RemoveUserFromDutyCommand value, CancellationToken cancellationToken = default)
         {
-            await this.Mediator.Send(value, cancellationToken);
+            await Mediator.Send(value, cancellationToken).ConfigureAwait(false);
             return this.RedirectToActionPermanent(nameof(this.Get), new { id = value.DutyId });
         }
 
@@ -74,7 +74,7 @@
         [HttpPut]
         public async Task<IActionResult> Substitute([FromBody]AddDutySubstitutionCommand value, CancellationToken cancellationToken = default)
         {
-            await this.Mediator.Send(value, cancellationToken);
+            await Mediator.Send(value, cancellationToken).ConfigureAwait(false);
             return this.RedirectToActionPermanent(nameof(this.Get), new { id = value.DutyId });
         }
     }

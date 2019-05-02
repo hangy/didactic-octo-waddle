@@ -25,7 +25,7 @@
             }
 
             outOfOffice.ChangeReason(message.Reason);
-            await this.outOfOfficeRepository.UpdateAsync(outOfOffice, cancellationToken).ConfigureAwait(false);
+            _ = await this.outOfOfficeRepository.UpdateAsync(outOfOffice, cancellationToken).ConfigureAwait(false);
             return Unit.Value;
         }
     }

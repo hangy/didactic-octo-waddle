@@ -22,7 +22,7 @@
         public async Task<IEnumerable<Duty>> Handle(GetAllDutyEntries message, CancellationToken cancellationToken = default)
 #pragma warning restore CC0061 // Asynchronous method can be terminated with the 'Async' keyword.
         {
-            return await this.Model.GetEntriesAsync(cancellationToken);
+            return await Model.GetEntriesAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }
