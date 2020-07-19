@@ -8,9 +8,9 @@
 
     public class Duty : Entity, IAggregateRoot
     {
-        private DateInterval interval;
+        private readonly DateInterval interval;
 
-        private string name;
+        private readonly string name;
 
         public Duty(string name, DateInterval interval)
         {
@@ -23,7 +23,7 @@
 
         /// <remark>
         /// Should only be used when build from the repository.
-        /// Creating this object with the protected constructor and pppulating it through reflection (like Entity Framework)
+        /// Creating this object with the protected constructor and populating it through reflection (like Entity Framework)
         /// could fix this issue, but that's not a priority for me, right now.
         /// </remark>
         public Duty(Guid id, string name, DateInterval interval, IEnumerable<IDomainEvent> domainEvents)

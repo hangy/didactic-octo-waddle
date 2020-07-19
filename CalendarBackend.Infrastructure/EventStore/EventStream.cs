@@ -21,10 +21,8 @@
 
         public async Task<IReadOnlyList<IDomainEvent>> ReadAllEventsAsync(CancellationToken cancellationToken = default)
         {
-            using (var eventReader = await this.eventStore.GetReaderAsync(cancellationToken).ConfigureAwait(false))
-            {
-                return await eventReader.ReadAllAsync(cancellationToken).ConfigureAwait(false);
-            }
+            using var eventReader = await this.eventStore.GetReaderAsync(cancellationToken).ConfigureAwait(false);
+            return await eventReader.ReadAllAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<int> WriteEventsAsync(IEnumerable<IDomainEvent> events, CancellationToken cancellationToken = default)

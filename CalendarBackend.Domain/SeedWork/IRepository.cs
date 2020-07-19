@@ -21,6 +21,7 @@ SOFTWARE.
 */
 namespace CalendarBackend.Domain.SeedWork
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1040:Leere Schnittstellen vermeiden", Justification = "Marker interface")]
     public interface IRepository<T> where T : IAggregateRoot
     {
     }

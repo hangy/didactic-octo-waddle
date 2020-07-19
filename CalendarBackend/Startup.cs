@@ -10,8 +10,8 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Newtonsoft.Json;
-    using NodaTime;
     using NodaTime.Serialization.JsonNet;
+    using NodaTime.Xml;
 
     public class Startup
     {
@@ -57,7 +57,7 @@
             services.AddSingleton(x =>
             {
                 var js = new JsonSerializer();
-                js.ConfigureForNodaTime(DateTimeZoneProviders.Serialization).WithIsoIntervalConverter();
+                js.ConfigureForNodaTime(XmlSerializationSettings.DateTimeZoneProvider).WithIsoIntervalConverter();
                 return js;
             });
 
@@ -66,7 +66,7 @@
             services.AddMvc()
                 .AddJsonOptions(options =>
                 {
-                    options.SerializerSettings.ConfigureForNodaTime(DateTimeZoneProviders.Serialization).WithIsoIntervalConverter().WithIsoDateIntervalConverter();
+                    options.SerializerSettings.ConfigureForNodaTime(XmlSerializationSettings.DateTimeZoneProvider).WithIsoIntervalConverter().WithIsoDateIntervalConverter();
                 }).AddControllersAsServices();
 
             services.RegisterInfrastructure(this.Configuration.GetConnectionString("EventStore"));

@@ -76,11 +76,9 @@
         /// </remarks>
         private void SerializeToStream(Stream stream, StoredEvent storedEvent)
         {
-            using (var sw = new StreamWriter(stream))
-            using (var jsonTextWriter = new JsonTextWriter(sw))
-            {
-                this.jsonSerializer.Serialize(jsonTextWriter, storedEvent);
-            }
+            using var sw = new StreamWriter(stream);
+            using var jsonTextWriter = new JsonTextWriter(sw);
+            this.jsonSerializer.Serialize(jsonTextWriter, storedEvent);
         }
 
         private string SerializeToString(IDomainEvent @event)
@@ -100,10 +98,8 @@
 
         private void WriteEntry(IDomainEvent @event, ZipArchiveEntry entry)
         {
-            using (var stream = entry.Open())
-            {
-                this.SerializeToStream(stream, this.Transform(@event));
-            }
+            using var stream = entry.Open();
+            this.SerializeToStream(stream, this.Transform(@event));
         }
     }
 }
