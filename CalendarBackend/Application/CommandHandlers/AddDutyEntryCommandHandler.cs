@@ -18,6 +18,11 @@
 
         public async Task<Guid> Handle(AddDutyEntryCommand message, CancellationToken cancellationToken)
         {
+            if (message is null)
+            {
+                throw new ArgumentNullException(nameof(message));
+            }
+
             var aggregate = await this.dutyRepository.AddAsync(new Duty(message.Name, message.Interval), cancellationToken).ConfigureAwait(false);
 
             return aggregate.Id;

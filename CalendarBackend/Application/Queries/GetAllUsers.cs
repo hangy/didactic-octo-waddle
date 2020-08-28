@@ -4,7 +4,7 @@
     using MediatR;
     using System.Collections.Generic;
 
-    public class GetAllUsers : IRequest<IEnumerable<User>>
+    public record GetAllUsers : IRequest<IEnumerable<User>>
     {
     }
 }

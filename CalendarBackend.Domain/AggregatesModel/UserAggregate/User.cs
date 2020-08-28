@@ -40,6 +40,11 @@
             this.mailAddress = mailAddress;
             this.color = color;
 
+            if (domainEvents == null)
+            {
+                return;
+            }
+
             foreach (var @event in domainEvents)
             {
                 this.AddDomainEvent(@event);

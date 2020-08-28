@@ -21,6 +21,11 @@
 
         public async Task<Duty> AddAsync(Duty duty, CancellationToken cancellationToken = default)
         {
+            if (duty is null)
+            {
+                throw new ArgumentNullException(nameof(duty));
+            }
+
             await this.eventStream.WriteEventsAsync(duty.DomainEvents, cancellationToken).ConfigureAwait(false);
             return duty;
         }
@@ -35,6 +40,10 @@
 
         public async Task<int> UpdateAsync(Duty duty, CancellationToken cancellationToken = default)
         {
+            if (duty is null)
+            {
+                throw new ArgumentNullException(nameof(duty));
+            }
             // We currently don't have a real change tracker, so just get the current entity and add new events.
             var current = await this.GetAsync(duty.Id, cancellationToken).ConfigureAwait(false);
             if (current == null)

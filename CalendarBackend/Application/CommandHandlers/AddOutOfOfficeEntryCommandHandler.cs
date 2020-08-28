@@ -18,6 +18,11 @@
 
         public async Task<Guid> Handle(AddOutOfOfficeEntryCommand message, CancellationToken cancellationToken)
         {
+            if (message is null)
+            {
+                throw new ArgumentNullException(nameof(message));
+            }
+
             var aggregate = await this.outOfOfficeRepository.AddAsync(new OutOfOffice(message.UserId, message.Interval, message.Reason), cancellationToken).ConfigureAwait(false);
             
             return aggregate.Id;

@@ -4,7 +4,7 @@
     using MediatR;
     using System;
 
-    public class GetConcreteOutOfOfficeEntry : IRequest<OutOfOffice>
+    public record GetConcreteOutOfOfficeEntry : IRequest<OutOfOffice?>
     {
         public GetConcreteOutOfOfficeEntry(Guid id)
         {

@@ -27,34 +27,38 @@ namespace CalendarBackend.Domain.SeedWork
 
     public abstract class Entity
     {
-        private List<IDomainEvent> domainEvents;
+        private List<IDomainEvent>? domainEvents;
 
         private int? requestedHashCode;
 
-        public List<IDomainEvent> DomainEvents => this.domainEvents;
+        public List<IDomainEvent> DomainEvents => this.domainEvents ??= new List<IDomainEvent>();
 
         public virtual Guid Id { get; set; }
 
-        public static bool operator !=(Entity left, Entity right)
+        public static bool operator !=(Entity? left, Entity? right)
         {
             return !(left == right);
         }
 
-        public static bool operator ==(Entity left, Entity right)
+        public static bool operator ==(Entity? left, Entity? right)
         {
             if (object.Equals(left, null))
-                return (object.Equals(right, null)) ? true : false;
+                return object.Equals(right, null);
             else
                 return left.Equals(right);
         }
 
         public void AddDomainEvent(IDomainEvent eventItem)
         {
-            domainEvents = domainEvents ?? new List<IDomainEvent>();
-            domainEvents.Add(eventItem);
+            if (eventItem is null)
+            {
+                throw new ArgumentNullException(nameof(eventItem));
+            }
+
+            this.DomainEvents.Add(eventItem);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj == null || !(obj is Entity))
                 return false;

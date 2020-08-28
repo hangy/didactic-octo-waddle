@@ -18,6 +18,11 @@
 
         public async Task<Unit> Handle(AddDutySubstitutionCommand message, CancellationToken cancellationToken)
         {
+            if (message is null)
+            {
+                throw new ArgumentNullException(nameof(message));
+            }
+
             var duty = await this.dutyRepository.GetAsync(message.DutyId, cancellationToken).ConfigureAwait(false);
             if (duty == null)
             {

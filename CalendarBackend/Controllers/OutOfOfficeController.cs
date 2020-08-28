@@ -10,6 +10,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
+#pragma warning disable CA1062 // Argumente von öffentlichen Methoden validieren
     [Route("api/[controller]"), Authorize(Policy = "TeamMember")]
     public class OutOfOfficeController : Controller
     {
@@ -56,7 +57,7 @@
         public async Task<IActionResult> Post([FromBody]AddOutOfOfficeEntryCommand value, CancellationToken cancellationToken = default)
         {
             var id = await Mediator.Send(value, cancellationToken).ConfigureAwait(false);
-            return this.CreatedAtAction(nameof(this.Get), new { id = id }, id);
+            return this.CreatedAtAction(nameof(this.Get), new { id }, id);
         }
 
         [Route("reschedule")]
@@ -75,4 +76,5 @@
             return this.RedirectToActionPermanent(nameof(this.Get), new { id = value.Id });
         }
     }
+#pragma warning restore CA1062 // Argumente von öffentlichen Methoden validieren
 }

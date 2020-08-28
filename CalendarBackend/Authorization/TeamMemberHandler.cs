@@ -21,6 +21,11 @@
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, TeamMemberRequirement requirement)
         {
+            if (context is null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             if (!string.IsNullOrWhiteSpace(this.TeamMemberRole) && context.User.IsInRole(this.TeamMemberRole))
             {
                 context.Succeed(requirement);

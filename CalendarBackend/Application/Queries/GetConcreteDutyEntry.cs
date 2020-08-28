@@ -5,7 +5,7 @@
     using NodaTime;
     using System;
 
-    public class GetConcreteDutyEntry : IRequest<Duty>
+    public record GetConcreteDutyEntry : IRequest<Duty?>
     {
         public GetConcreteDutyEntry(Guid id, LocalDate? startAppointmentRange, LocalDate? endAppointmentRange)
         {

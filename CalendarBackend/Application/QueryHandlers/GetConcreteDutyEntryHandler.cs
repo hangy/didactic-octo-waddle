@@ -9,7 +9,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class GetConcreteDutyEntryHandler : IRequestHandler<GetConcreteDutyEntry, Duty>
+    public class GetConcreteDutyEntryHandler : IRequestHandler<GetConcreteDutyEntry, Duty?>
     {
         private readonly DutyReadModel model;
 
@@ -18,7 +18,7 @@
             this.model = model ?? throw new ArgumentNullException(nameof(model));
         }
 
-        public async Task<Duty> Handle(GetConcreteDutyEntry message, CancellationToken cancellationToken)
+        public async Task<Duty?> Handle(GetConcreteDutyEntry message, CancellationToken cancellationToken)
         {
             var entries = await this.model.GetEntriesAsync(cancellationToken).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();

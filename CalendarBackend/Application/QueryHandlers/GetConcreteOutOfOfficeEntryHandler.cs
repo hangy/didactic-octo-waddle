@@ -8,7 +8,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class GetConcreteOutOfOfficeEntryHandler : IRequestHandler<GetConcreteOutOfOfficeEntry, OutOfOffice>
+    public class GetConcreteOutOfOfficeEntryHandler : IRequestHandler<GetConcreteOutOfOfficeEntry, OutOfOffice?>
     {
         private readonly OutOfOfficeReadModel model;
 
@@ -17,7 +17,7 @@
             this.model = model ?? throw new ArgumentNullException(nameof(model));
         }
 
-        public async Task<OutOfOffice> Handle(GetConcreteOutOfOfficeEntry message, CancellationToken cancellationToken)
+        public async Task<OutOfOffice?> Handle(GetConcreteOutOfOfficeEntry message, CancellationToken cancellationToken)
         {
             var entries = await this.model.GetEntriesAsync(cancellationToken).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();

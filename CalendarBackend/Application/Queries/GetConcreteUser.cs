@@ -4,7 +4,7 @@
     using MediatR;
     using System;
 
-    public class GetConcreteUser : IRequest<User>
+    public record GetConcreteUser : IRequest<User?>
     {
         public GetConcreteUser(Guid id)
         {

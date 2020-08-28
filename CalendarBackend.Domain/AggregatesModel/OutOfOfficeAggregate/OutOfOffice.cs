@@ -35,7 +35,12 @@
             this.userId = userId;
             this.interval = interval;
             this.reason = reason;
-            
+
+            if (domainEvents == null)
+            {
+                return;
+            }
+
             foreach (var @event in domainEvents)
             {
                 this.AddDomainEvent(@event);

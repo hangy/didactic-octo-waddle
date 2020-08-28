@@ -8,7 +8,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class GetConcreteUserHandler : IRequestHandler<GetConcreteUser, User>
+    public class GetConcreteUserHandler : IRequestHandler<GetConcreteUser, User?>
     {
         private readonly UserReadModel model;
 
@@ -17,7 +17,7 @@
             this.model = model ?? throw new ArgumentNullException(nameof(model));
         }
 
-        public async Task<User> Handle(GetConcreteUser message, CancellationToken cancellationToken)
+        public async Task<User?> Handle(GetConcreteUser message, CancellationToken cancellationToken)
         {
             var entries = await this.model.GetEntriesAsync(cancellationToken).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();

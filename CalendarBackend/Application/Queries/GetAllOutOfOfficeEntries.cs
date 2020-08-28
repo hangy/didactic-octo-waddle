@@ -4,7 +4,7 @@
     using MediatR;
     using System.Collections.Generic;
 
-    public class GetAllOutOfOfficeEntries : IRequest<IEnumerable<OutOfOffice>>
+    public record GetAllOutOfOfficeEntries : IRequest<IEnumerable<OutOfOffice>>
     {
     }
 }

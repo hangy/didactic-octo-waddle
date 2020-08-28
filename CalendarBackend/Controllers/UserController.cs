@@ -57,7 +57,7 @@
         public async Task<IActionResult> Post([FromBody]AddUserCommand value, CancellationToken cancellationToken = default)
         {
             var id = await Mediator.Send(value, cancellationToken).ConfigureAwait(false);
-            return this.CreatedAtAction(nameof(this.Get), new { id = id }, id);
+            return this.CreatedAtAction(nameof(this.Get), new { id }, id);
         }
     }
 }

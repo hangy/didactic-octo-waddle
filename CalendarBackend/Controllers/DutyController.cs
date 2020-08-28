@@ -6,12 +6,12 @@
     using MediatR;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using NodaTime;
     using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
+#pragma warning disable CA1062 // Argumente von öffentlichen Methoden validieren
     [Route("api/[controller]"), Authorize(Policy = "TeamMember")]
     public class DutyController : Controller
     {
@@ -59,7 +59,7 @@
         public async Task<IActionResult> Post([FromBody]AddDutyEntryCommand value, CancellationToken cancellationToken = default)
         {
             var id = await Mediator.Send(value, cancellationToken).ConfigureAwait(false);
-            return this.CreatedAtAction(nameof(this.Get), new { id = id }, id);
+            return this.CreatedAtAction(nameof(this.Get), new { id }, id);
         }
 
         [Route("user")]
@@ -78,4 +78,5 @@
             return this.RedirectToActionPermanent(nameof(this.Get), new { id = value.DutyId });
         }
     }
+#pragma warning restore CA1062 // Argumente von öffentlichen Methoden validieren
 }

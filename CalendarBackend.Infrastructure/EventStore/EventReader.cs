@@ -4,6 +4,7 @@
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.IO;
     using System.IO.Compression;
     using System.Linq;
@@ -37,7 +38,7 @@
             try
             {
                 using var zipArchive = ZipFile.Open(this.path, ZipArchiveMode.Read);
-                return zipArchive.Entries.OrderBy(e => e.FullName).Select(this.Transform).ToList();
+                return zipArchive.Entries.OrderBy(e => e.FullName).Select(this.Transform).Where(e => e != null).Cast<IDomainEvent>().ToImmutableList();
             }
             finally
             {
@@ -48,18 +49,18 @@
         /// <remarks>
         /// https://stackoverflow.com/a/17788118/11963
         /// </remarks>
-        private StoredEvent DeserializeFromStream(Stream stream)
+        private StoredEvent? DeserializeFromStream(Stream stream)
         {
             using var sr = new StreamReader(stream);
             using var jsonTextReader = new JsonTextReader(sr);
-            return this.jsonSerializer.Deserialize<StoredEvent>(jsonTextReader);
+            return this.jsonSerializer.Deserialize<StoredEvent?>(jsonTextReader);
         }
 
-        private IDomainEvent DeserializeFromString(string value, Type type)
+        private IDomainEvent? DeserializeFromString(string value, Type type)
         {
             var sr = new StringReader(value);
             using var jsonReader = new JsonTextReader(sr);
-            return (IDomainEvent)this.jsonSerializer.Deserialize(jsonReader, type);
+            return this.jsonSerializer.Deserialize(jsonReader, type) as IDomainEvent;
         }
 
         protected virtual void Dispose(bool disposing)
@@ -70,11 +71,22 @@
             }
         }
 
-        private IDomainEvent Transform(ZipArchiveEntry arg)
+        private IDomainEvent? Transform(ZipArchiveEntry arg)
         {
             using var stream = arg.Open();
             var storedEvent = this.DeserializeFromStream(stream);
-            return this.DeserializeFromString(storedEvent.Json, Type.GetType(storedEvent.TypeName));
+            if (storedEvent is null)
+            {
+                return null;
+            }
+
+            var type = Type.GetType(storedEvent.TypeName);
+            if (type is null)
+            {
+                return null;
+            }
+
+            return this.DeserializeFromString(storedEvent.Json, type);
         }
     }
 }

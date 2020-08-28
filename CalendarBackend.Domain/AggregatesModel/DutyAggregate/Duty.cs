@@ -32,6 +32,11 @@
             this.name = name;
             this.interval = interval;
 
+            if (domainEvents == null)
+            {
+                return;
+            }
+
             foreach (var @event in domainEvents)
             {
                 this.AddDomainEvent(@event);

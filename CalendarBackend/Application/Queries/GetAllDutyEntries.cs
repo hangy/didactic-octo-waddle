@@ -4,7 +4,7 @@
     using MediatR;
     using System.Collections.Generic;
 
-    public class GetAllDutyEntries : IRequest<IEnumerable<Duty>>
+    public record GetAllDutyEntries : IRequest<IEnumerable<Duty>>
     {
     }
 }

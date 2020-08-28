@@ -22,6 +22,11 @@
 
         public async Task<User> AddAsync(User user, CancellationToken cancellationToken = default)
         {
+            if (user is null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
             await this.eventStream.WriteEventsAsync(user.DomainEvents, cancellationToken).ConfigureAwait(false);
             return user;
         }

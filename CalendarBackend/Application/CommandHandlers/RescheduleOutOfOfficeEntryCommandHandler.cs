@@ -18,6 +18,11 @@
 
         public async Task<Unit> Handle(RescheduleOutOfOfficeEntryCommand message, CancellationToken cancellationToken)
         {
+            if (message is null)
+            {
+                throw new ArgumentNullException(nameof(message));
+            }
+
             var outOfOffice = await this.outOfOfficeRepository.GetAsync(message.Id, cancellationToken).ConfigureAwait(false);
             if (outOfOffice == null)
             {
