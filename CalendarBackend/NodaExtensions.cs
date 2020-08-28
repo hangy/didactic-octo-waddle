@@ -22,19 +22,21 @@
             {
                 throw new ArgumentNullException(nameof(settings));
             }
+
             ReplaceExistingConverters<DateInterval>(settings.Converters, new NodaIsoDateIntervalConverter());
             return settings;
         }
 
         private static void ReplaceExistingConverters<T>(IList<JsonConverter> converters, JsonConverter newConverter)
         {
-            for (int i = converters.Count - 1; i >= 0; i--)
+            for (var i = converters.Count - 1; i >= 0; i--)
             {
                 if (converters[i].CanConvert(typeof(T)))
                 {
                     converters.RemoveAt(i);
                 }
             }
+
             converters.Add(newConverter);
         }
 
@@ -42,25 +44,36 @@
         {
             protected override DateInterval ReadJsonImpl(JsonReader reader, JsonSerializer serializer)
             {
+                if (reader is null)
+                {
+                    throw new ArgumentNullException(nameof(reader));
+                }
+
+                if (serializer is null)
+                {
+                    throw new ArgumentNullException(nameof(serializer));
+                }
+
                 if (reader.TokenType != JsonToken.String)
                 {
                     throw new InvalidNodaDataException(
                         $"Unexpected token parsing DateInterval. Expected String, got {reader.TokenType}.");
                 }
-                string text = reader.Value.ToString();
-                int slash = text.IndexOf('/');
+
+                var text = reader.Value.ToString();
+                var slash = text.IndexOf('/');
                 if (slash == -1)
                 {
                     throw new InvalidNodaDataException("Expected ISO-8601-formatted date interval; slash was missing.");
                 }
 
-                string startText = text.Substring(0, slash);
+                var startText = text.Substring(0, slash);
                 if (startText == "")
                 {
                     throw new InvalidNodaDataException("Expected ISO-8601-formatted date interval; start date was missing.");
                 }
 
-                string endText = text.Substring(slash + 1);
+                var endText = text.Substring(slash + 1);
                 if (endText == "")
                 {
                     throw new InvalidNodaDataException("Expected ISO-8601-formatted date interval; end date was missing.");
@@ -82,7 +95,7 @@
             protected override void WriteJsonImpl(JsonWriter writer, DateInterval value, JsonSerializer serializer)
             {
                 var pattern = LocalDatePattern.Iso;
-                string text = pattern.Format(value.Start) + "/" + pattern.Format(value.End);
+                var text = pattern.Format(value.Start) + "/" + pattern.Format(value.End);
                 writer.WriteValue(text);
             }
         }

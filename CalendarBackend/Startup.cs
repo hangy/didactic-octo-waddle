@@ -9,6 +9,7 @@
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
     using Newtonsoft.Json;
     using NodaTime.Serialization.JsonNet;
     using NodaTime.Xml;
@@ -23,13 +24,12 @@
         public IConfiguration Configuration { get; }
 
 #pragma warning disable CA1822 // Mark members as static - This method gets called by the runtime.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 #pragma warning restore CA1822 // Mark members as static - This method gets called by the runtime.
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseBrowserLink();
             }
             else
             {
@@ -38,16 +38,14 @@
 
             app.UseStaticFiles();
 
-            app.UseSignalR(routes =>
-            {
-                routes.MapHub<Event>("/event");
-            });
+            app.UseRouting();
 
-            app.UseMvc(routes =>
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapDefaultControllerRoute();
+                endpoints.MapHub<Event>("/event");
             });
         }
 
@@ -64,7 +62,7 @@
             services.AddSignalR();
 
             services.AddMvc()
-                .AddJsonOptions(options =>
+                .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ConfigureForNodaTime(XmlSerializationSettings.DateTimeZoneProvider).WithIsoIntervalConverter().WithIsoDateIntervalConverter();
                 }).AddControllersAsServices();
